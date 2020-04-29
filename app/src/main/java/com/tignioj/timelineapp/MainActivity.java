@@ -2,6 +2,7 @@ package com.tignioj.timelineapp;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -13,41 +14,50 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
-import com.tignioj.timelineapp.floating_tasks.FloatingWindowService;
+import com.tignioj.timelineapp.tasks.UpdateTasksService;
+import com.tignioj.timelineapp.utils.CommonUtils;
 
 public class MainActivity extends AppCompatActivity {
 
     NavController controller;
 
-    FloatingWindowService.FloatingWindowIBinder myIBinder;
+    UpdateTasksService.FloatingWindowIBinder myIBinder;
 
     private static final int UPDATE_LIST = 0x100;
 
-
+    MyConnection myConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         //显示导航栏的返回按钮
         controller = Navigation.findNavController(this, R.id.fragment);
         NavigationUI.setupActionBarWithNavController(this, controller);
 
 
-//        Intent service = new Intent(getApplicationContext(), FloatingWindowService.class);
-//        startService(service);
-//        bindService(service, new MyConnection(), BIND_AUTO_CREATE);
+        //开启更新任务的服务
+        Intent service = new Intent(getApplicationContext(), UpdateTasksService.class);
+        startService(service);
+        myConnection = new MyConnection();
+        bindService(service, myConnection, BIND_AUTO_CREATE);
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(myConnection);
+    }
 
     private class MyConnection implements ServiceConnection {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             //只有当Service的onBind方法返回值不为null的时候，才会调用onServiceConnected
             Log.d("myTag", "onServiceConnected");
-            myIBinder = (FloatingWindowService.FloatingWindowIBinder) service;
+            myIBinder = (UpdateTasksService.FloatingWindowIBinder) service;
+            myIBinder.setContext(MainActivity.this);
             myIBinder.startFloating();
         }
 

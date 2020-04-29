@@ -1,7 +1,6 @@
 package com.tignioj.timelineapp.floating_timeline;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -24,15 +23,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.tignioj.timelineapp.MyViewModel;
 import com.tignioj.timelineapp.R;
+import com.tignioj.timelineapp.config.GlobalConfiguration;
 import com.tignioj.timelineapp.entity.TimeLinePoJo;
-import com.tignioj.timelineapp.entity.TimeLineWithTaskCountsPoJo;
 import com.tignioj.timelineapp.floating_tasks.FloatingTasksFragment;
 import com.tignioj.timelineapp.utils.CommonUtils;
 import com.tignioj.timelineapp.utils.WindowManagerUtils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 
@@ -40,11 +36,20 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class FloatingTimeLineFragment extends Fragment {
-    private static final int UPDATE_TIMELINE = 0x101;
+    public static final int UPDATE_TIMELINE_ON_DAY_CHANGE = 0x101;
+    private static final int UPDATE_TIMELINE_ON_TIME_CHANGE = 0x102;
     MyViewModel myViewModel;
     View viewInWindowManager;
     RecyclerView rcv;
     Handler handler;
+
+    public Handler getHandler() {
+        return handler;
+    }
+
+    public MyViewModel getMyViewModel() {
+        return myViewModel;
+    }
 
     /**
      * 什么情况下需要更新数据？
@@ -67,24 +72,11 @@ public class FloatingTimeLineFragment extends Fragment {
         }
     };
 
-    private static final String SHP_TODAY_STRING = "TODAY_STRING";
-    private static final String SHP_DB_MY_DATE = "SHP_DB_MY_DATE";
-    private String dayStoreInShp;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        SharedPreferences shp = requireActivity().getSharedPreferences(SHP_DB_MY_DATE, Context.MODE_PRIVATE);
-        dayStoreInShp = shp.getString(SHP_TODAY_STRING, null);
-        //如果还没有存储今天的时间数据，则存一个进去
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        if (dayStoreInShp == null) {
-            SharedPreferences.Editor edit = shp.edit();
-            dayStoreInShp = sdf.format(new Date());
-            edit.putString(SHP_TODAY_STRING, dayStoreInShp);
-            edit.commit();
-        }
 
 
         this.myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
@@ -97,7 +89,7 @@ public class FloatingTimeLineFragment extends Fragment {
         }
 
         FragmentManager sf = requireActivity().getSupportFragmentManager();
-        final FloatingTasksFragment floatingTasksFragment = (FloatingTasksFragment) sf.findFragmentByTag("floating_tasks");
+        final FloatingTasksFragment floatingTasksFragment = (FloatingTasksFragment) sf.findFragmentByTag(GlobalConfiguration.FLOATING_TASKS_FRAGMENT_TAG);
         handler = new Handler(Looper.getMainLooper()) {
             int i = 0;
 
@@ -107,39 +99,42 @@ public class FloatingTimeLineFragment extends Fragment {
                     return;
                 }
                 super.handleMessage(msg);
-                if (msg.what == UPDATE_TIMELINE) {
-                    //TODO 根据时间变化，taskCount数量变化问题
-                    if (isDayChange()) {
+                switch (msg.what) {
+                    //此时天数改变，需要更新TimeLine的tasksCount, 也就意味着全部timeLine都要请求一遍
+                    case UPDATE_TIMELINE_ON_DAY_CHANGE:
                         myViewModel.refreshFloatingTimeLines();
                         timeLinePoJoLiveData = myViewModel.getFloatingTimeLinePoJoListLiveData();
                         timeLinePoJoLiveData.observeForever(observer);
-                    }
-
+                        Log.d("myTag", "update all timeline because day change");
+                        break;
                     //根据时间更新数据
-                    List<TimeLinePoJo> value = timeLinePoJoLiveData.getValue();
-                    if (value != null) {
-                        for (int j = 0; j < value.size(); j++) {
-                            TimeLinePoJo t = value.get(j);
-                            if (isCurrentTimeLine(t)) {
-                                if (!t.isCurrent()) {
-                                    t.setCurrent(true);
-                                    adapter.notifyItemChanged(j);
-                                    floatingTasksFragment.refreshTasks();
-                                }
-                            } else {
-                                if (t.isCurrent()) {
-                                    t.setCurrent(false);
-                                    adapter.notifyItemChanged(j);
-                                    floatingTasksFragment.refreshTasks();
+                    case UPDATE_TIMELINE_ON_TIME_CHANGE:
+                        List<TimeLinePoJo> value = timeLinePoJoLiveData.getValue();
+                        if (value != null) {
+                            for (int j = 0; j < value.size(); j++) {
+                                TimeLinePoJo t = value.get(j);
+                                if (isCurrentTimeLine(t)) {
+                                    if (!t.isCurrent()) {
+                                        t.setCurrent(true);
+                                        adapter.notifyItemChanged(j);
+                                        floatingTasksFragment.refreshTasks();
+                                    }
+                                } else {
+                                    if (t.isCurrent()) {
+                                        t.setCurrent(false);
+                                        adapter.notifyItemChanged(j);
+                                        floatingTasksFragment.refreshTasks();
+                                    }
                                 }
                             }
                         }
-                    }
-                    //发送消息
-                    Message message = new Message();
-                    message.what = UPDATE_TIMELINE;
-                    sendMessageDelayed(message, 1000);
-                    Log.d("myTag", "update timeline" + this.i++);
+                        //发送消息
+                        Message message = new Message();
+                        //循环TimeChange
+                        message.what = UPDATE_TIMELINE_ON_TIME_CHANGE;
+                        sendMessageDelayed(message, 1000);
+                        Log.d("myTag", "update highlight timeline" + this.i++);
+                        break;
                 }
             }
         };
@@ -148,26 +143,6 @@ public class FloatingTimeLineFragment extends Fragment {
 
     private boolean isCurrentTimeLine(TimeLinePoJo timeLinePoJo) {
         return CommonUtils.betweenStartTimeAndEndTime(timeLinePoJo.getTimeLine().getStartTime(), timeLinePoJo.getTimeLine().getEndTime());
-    }
-
-    /**
-     * 判断是不是第二天了
-     * @return
-     */
-    private boolean isDayChange() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String today = sdf.format(new Date());
-        boolean b = today.equals(dayStoreInShp);
-
-        if (!b) {
-            Log.d("myTag", dayStoreInShp + "->" + today);
-            SharedPreferences shp = requireActivity().getSharedPreferences(SHP_DB_MY_DATE, Context.MODE_PRIVATE);
-            dayStoreInShp = today;
-            SharedPreferences.Editor edit = shp.edit();
-            edit.putString(SHP_TODAY_STRING, today);
-            edit.commit();
-        }
-        return !b;
     }
 
 
@@ -185,9 +160,9 @@ public class FloatingTimeLineFragment extends Fragment {
     //视图逻辑初始化
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        //发送消息
+        //发送更新Current timeline的消息
         Message message = new Message();
-        message.what = UPDATE_TIMELINE;
+        message.what = UPDATE_TIMELINE_ON_TIME_CHANGE;
         handler.sendMessage(message);
 
         super.onActivityCreated(savedInstanceState);

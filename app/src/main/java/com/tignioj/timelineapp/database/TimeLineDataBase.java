@@ -17,7 +17,7 @@ import com.tignioj.timelineapp.entity.TimeLine;
 import java.util.Date;
 
 
-@Database(entities = {TimeLine.class, MyTask.class}, version = 6, exportSchema = false)
+@Database(entities = {TimeLine.class, MyTask.class}, version = 7, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class TimeLineDataBase extends RoomDatabase {
 
@@ -39,7 +39,9 @@ public abstract class TimeLineDataBase extends RoomDatabase {
                     /*级联删除tasks*/
 //                    .addMigrations(MIGRATION_4_5)
                     /*修改列名，添加新字段*/
-                    .addMigrations(MIGRATION_5_6)
+//                    .addMigrations(MIGRATION_5_6)
+                    /*添加Task创建时间*/
+                    .addMigrations(MIGRATION_6_7)
                     .build();
         }
         return INSTANCE;
@@ -144,6 +146,19 @@ public abstract class TimeLineDataBase extends RoomDatabase {
             supportSQLiteDatabase.execSQL("ALTER TABLE myTaskTemp RENAME TO myTask");
         }
     };
+
+    /**
+     * 版本3->4 添加myTask的创建时间
+     */
+    static final Migration MIGRATION_6_7 = new Migration(6, 7) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase supportSQLiteDatabase) {
+            Date date = new Date();
+            long time = date.getTime();
+            supportSQLiteDatabase.execSQL("ALTER TABLE myTask  ADD COLUMN create_time INTEGER DEFAULT " + time);
+        }
+    };
+
 
 
 }

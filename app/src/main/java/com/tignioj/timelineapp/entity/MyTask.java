@@ -1,12 +1,17 @@
 package com.tignioj.timelineapp.entity;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 //TODO 增加重复字段
 @Entity(
@@ -31,14 +36,47 @@ public class MyTask {
     @ColumnInfo(name = "repeat")
     private boolean repeat;
 
+    @ColumnInfo(name = "create_time")
+    private Date createTime;
 
 
+    public Date getCreateTime() {
+        return createTime;
+    }
 
-    public MyTask(long timelineId, String content, boolean hasFinish, Date remindMeDate, boolean repeat) {
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MyTask myTask = (MyTask) o;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        boolean b = sdf.format(createTime).equals(
+                new SimpleDateFormat("yyyy-MM-dd").format(myTask.createTime));
+
+        boolean b1 = timeline == myTask.timeline &&
+                repeat == myTask.repeat &&
+                Objects.equals(content, myTask.content) && b;
+        return b1;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public int hashCode() {
+        return Objects.hash(timeline, content, remindMeDate, repeat);
+    }
+
+    public MyTask(long timelineId, String content, boolean hasFinish, Date remindMeDate, Date createTime, boolean repeat) {
         this.timeline = timelineId;
         this.content = content;
         this.hasFinish = hasFinish;
         this.remindMeDate = remindMeDate;
+        this.createTime = createTime;
         this.repeat = repeat;
     }
 
@@ -102,6 +140,7 @@ public class MyTask {
                 ", hasFinish=" + hasFinish +
                 ", remindMeDate=" + remindMeDate +
                 ", repeat=" + repeat +
+                ", createTime=" + createTime +
                 '}';
     }
 }

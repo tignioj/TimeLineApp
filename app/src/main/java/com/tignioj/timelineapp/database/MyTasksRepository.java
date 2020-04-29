@@ -8,7 +8,6 @@ import androidx.sqlite.db.SimpleSQLiteQuery;
 
 import com.tignioj.timelineapp.entity.MyTask;
 import com.tignioj.timelineapp.entity.MyTaskPoJo;
-import com.tignioj.timelineapp.entity.TimeLinePoJo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +58,20 @@ public class MyTasksRepository {
         this.todayAllTasksLiveByCurrentTimeLine = tasksDao.getTodayAllTasksLiveByCurrentTimeLine();
     }
 
+//    /**
+//     * 更新第二天的数据
+//     */
+//    public List<MyTask> updateRepeatTasks() {
+//        return getTodayAllMyTasks();
+//    }
+
+    public LiveData<List<MyTask>> getTodayAllMyRepeatTasksLive() {
+        return tasksDao.getTodayAllRepeatTasksLive();
+    }
+
+    public List<MyTask> getTodayAllMyTask(){
+        return tasksDao.getTodayAllTasks();
+    }
 
     static class InsertAsyncTask extends AsyncTask<MyTask, Void, Void> {
         private TasksDao tasksDao;

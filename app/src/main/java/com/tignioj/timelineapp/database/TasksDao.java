@@ -38,11 +38,16 @@ public interface TasksDao {
 
 
     /**
-     * 获取今天的数据
+     * 根据TimeLineId获取今天的数据
      *
      * @return
      */
-    @Query("SELECT * FROM MyTask WHERE timeline_id=:timeline_id AND date(datetime(remind_me_date / 1000 , 'unixepoch')) = date('now')  ORDER BY id ")
+    @Query("SELECT * " +
+            "FROM MyTask " +
+            "WHERE timeline_id=:timeline_id " +
+            "AND date(datetime(remind_me_date / 1000 , 'unixepoch')) = date('now')  " +
+            "ORDER BY id " +
+            "")
     LiveData<List<MyTask>> getTodayAllTasksLiveByTimeLine(long timeline_id);
 
     //    @Query("SELECT * FROM MyTask WHERE timeline_id=:timeline_id  AND date(datetime(create_time / 1000 , 'unixepoch')) = date('now')  ORDER BY id ")
@@ -61,4 +66,30 @@ public interface TasksDao {
             " AND MyTask.has_finished = 0" +
             " AND date(datetime(remind_me_date / 1000 , 'unixepoch', 'localtime')) = date('now', 'localtime')")
     LiveData<List<MyTaskPoJo>> getTodayAllTasksLiveByCurrentTimeLine();
+
+
+    /**
+     * 获取今天的设置了repeat的数据
+     *
+     * @return
+     */
+    @Query("SELECT * " +
+            "FROM MyTask " +
+            "WHERE repeat = 1 " +
+            "AND date(datetime(remind_me_date / 1000 , 'unixepoch', 'localtime')) = date('now', 'localtime')  " +
+            "ORDER BY id " +
+            "")
+    LiveData<List<MyTask>> getTodayAllRepeatTasksLive();
+
+    /**
+     * 获取今天的数据
+     *
+     * @return
+     */
+    @Query("SELECT * " +
+            "FROM MyTask " +
+            "WHERE date(datetime(remind_me_date / 1000 , 'unixepoch', 'localtime')) = date('now', 'localtime')  " +
+            "ORDER BY id " +
+            "")
+    List<MyTask> getTodayAllTasks();
 }

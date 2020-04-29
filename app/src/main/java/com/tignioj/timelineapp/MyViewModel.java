@@ -87,7 +87,7 @@ public class MyViewModel extends AndroidViewModel {
 
         for (TimeLine t : timeLineRepository.getAllTimeLines()) {
             for (int i = 0; i < 30; i++) {
-                myTasksRepository.insertMyTasks(new MyTask(t.getId(), "task" + i, false, new Date(), false));
+                myTasksRepository.insertMyTasks(new MyTask(t.getId(), "task" + i, false, new Date(), new Date(), false));
             }
         }
     }

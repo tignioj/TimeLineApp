@@ -43,22 +43,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.tignioj.timelineapp.MyViewModel;
 import com.tignioj.timelineapp.R;
+import com.tignioj.timelineapp.config.GlobalConfiguration;
 import com.tignioj.timelineapp.entity.TimeLineWithTaskCountsPoJo;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.tignioj.timelineapp.floating_tasks.FloatingTasksFragment;
 import com.tignioj.timelineapp.floating_timeline.FloatingTimeLineFragment;
 import com.tignioj.timelineapp.utils.CommonUtils;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 
 public class TimeLineFragment extends Fragment {
     private static final String DB_TIMELINE_SHOWING_SETTING = "db_timeline_showing_setting";
     private static final int MY_PERMISSIONS_REQUEST_FLOATING_WINDOW = 0x1000;
-    private static final int UPDATE_TIMELINE_LIST = 0x100;
     private static final String SHP_SHOW_FLOATING = "show_floating";
+    public static final int UPDATE_TIMELINE_LIST_ON_DAY_CHANGE = 0x100;
+    private static final int UPDATE_TIMELINE_LIST_ON_TIME_CHANGE = 0x101;
     private MyViewModel myViewModel;
     private RecyclerView recyclerView;
     //滑动时边界的内容
@@ -67,9 +67,12 @@ public class TimeLineFragment extends Fragment {
 
     LiveData<List<TimeLineWithTaskCountsPoJo>> timeLineWithTodayHasNoFinishedTasksCount;
 
-    private static final String SHP_TODAY_STRING = "TODAY_STRING";
-    private static final String SHP_DB_MY_DATE = "SHP_DB_MY_DATE";
-    private String dayStoreInShp;
+
+    Handler handler;
+
+    public Handler getHandler() {
+        return handler;
+    }
 
     public TimeLineFragment() {
         // Required empty public constructor
@@ -143,8 +146,8 @@ public class TimeLineFragment extends Fragment {
         }
         Boolean value = myViewModel.getIsFloating().getValue();
         FragmentManager sf = requireActivity().getSupportFragmentManager();
-        Fragment floating_tasks = sf.findFragmentByTag("floating_tasks");
-        Fragment floating_timeline = sf.findFragmentByTag("floating_timeline");
+        Fragment floating_tasks = sf.findFragmentByTag(GlobalConfiguration.FLOATING_TASKS_FRAGMENT_TAG);
+        Fragment floating_timeline = sf.findFragmentByTag(GlobalConfiguration.FLOATING_TIME_LINE_FRAGMENT_TAG);
         if (floating_tasks == null) {
             floating_tasks = new FloatingTasksFragment();
         }
@@ -156,10 +159,10 @@ public class TimeLineFragment extends Fragment {
         if (value) {
             Toast.makeText(requireActivity().getApplicationContext(), "悬浮窗状态:开启", Toast.LENGTH_SHORT).show();
             if (floating_tasks.getView() == null) {
-                ft.add(floating_tasks, "floating_tasks");
+                ft.add(floating_tasks, GlobalConfiguration.FLOATING_TASKS_FRAGMENT_TAG);
             }
             if (floating_timeline.getView() == null) {
-                ft.add(floating_timeline, "floating_timeline");
+                ft.add(floating_timeline, GlobalConfiguration.FLOATING_TIME_LINE_FRAGMENT_TAG);
             }
         } else {
             if (floating_tasks.getView() != null) {
@@ -215,33 +218,12 @@ public class TimeLineFragment extends Fragment {
     }
 
 
-    /**
-     * 判断是不是第二天了
-     *
-     * @return
-     */
-    private boolean isDayChange() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String today = sdf.format(new Date());
-        boolean b = today.equals(dayStoreInShp);
-
-        if (!b) {
-            Log.d("myTag", dayStoreInShp + "->" + today);
-            SharedPreferences shp = requireActivity().getSharedPreferences(SHP_DB_MY_DATE, Context.MODE_PRIVATE);
-            dayStoreInShp = today;
-            SharedPreferences.Editor edit = shp.edit();
-            edit.putString(SHP_TODAY_STRING, today);
-            edit.commit();
-        }
-        return !b;
-    }
-
-    Handler handler;
     //如果程序在后台，则不更新界面的数据
     boolean isProgramInBackground;
     Observer observer;
 
     TimeLineAdapter timeLineAdapter;
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 
@@ -281,35 +263,35 @@ public class TimeLineFragment extends Fragment {
                 if (isProgramInBackground) {
                     return;
                 }
-
-                if (isDayChange()) {
-                    myViewModel.refreshTimeLines();
-                    timeLineWithTodayHasNoFinishedTasksCount = myViewModel.getTimeLineWithTodayHasNoFinishedTasksCount();
-                    timeLineWithTodayHasNoFinishedTasksCount.observe(requireActivity(), observer);
-                }
-
-
-                Message message = new Message();
-                message.what = UPDATE_TIMELINE_LIST;
-                sendMessageDelayed(message, 1000);
-                List<TimeLineWithTaskCountsPoJo> value = timeLineWithTodayHasNoFinishedTasksCount.getValue();
-                if (value != null) {
-                    for (int j = 0; j < value.size(); j++) {
-                        TimeLineWithTaskCountsPoJo t = value.get(j);
-                        if (isCurrentTimeLine(t)) {
-                            if (!t.isCurrent()) {
-                                t.setCurrent(true);
-                                timeLineAdapter.notifyItemChanged(j);
-                            }
-                        } else {
-                            if (t.isCurrent()) {
-                                t.setCurrent(false);
-                                timeLineAdapter.notifyItemChanged(j);
+                switch (msg.what) {
+                    case UPDATE_TIMELINE_LIST_ON_DAY_CHANGE:
+                        myViewModel.refreshTimeLines();
+                        timeLineWithTodayHasNoFinishedTasksCount = myViewModel.getTimeLineWithTodayHasNoFinishedTasksCount();
+                        timeLineWithTodayHasNoFinishedTasksCount.observe(requireActivity(), observer);
+                        break;
+                    case UPDATE_TIMELINE_LIST_ON_TIME_CHANGE:
+                        List<TimeLineWithTaskCountsPoJo> value = timeLineWithTodayHasNoFinishedTasksCount.getValue();
+                        if (value != null) {
+                            for (int j = 0; j < value.size(); j++) {
+                                TimeLineWithTaskCountsPoJo t = value.get(j);
+                                if (isCurrentTimeLine(t)) {
+                                    if (!t.isCurrent()) {
+                                        t.setCurrent(true);
+                                        timeLineAdapter.notifyItemChanged(j);
+                                    }
+                                } else {
+                                    if (t.isCurrent()) {
+                                        t.setCurrent(false);
+                                        timeLineAdapter.notifyItemChanged(j);
+                                    }
+                                }
                             }
                         }
-                    }
+                        Message message = new Message();
+                        message.what = UPDATE_TIMELINE_LIST_ON_DAY_CHANGE;
+                        sendMessageDelayed(message, 1000);
+                        Log.d("myTag", "update timeline list" + i++);
                 }
-                Log.d("myTag", "update timeline list" + i++);
             }
 
             private boolean isCurrentTimeLine(TimeLineWithTaskCountsPoJo t) {
@@ -459,7 +441,7 @@ public class TimeLineFragment extends Fragment {
         super.onStart();
         isProgramInBackground = false;
         Message message = new Message();
-        message.what = UPDATE_TIMELINE_LIST;
-        handler.sendMessageDelayed(message, 1000);
+        message.what = UPDATE_TIMELINE_LIST_ON_TIME_CHANGE;
+//        handler.sendMessageDelayed(message, 1000);
     }
 }

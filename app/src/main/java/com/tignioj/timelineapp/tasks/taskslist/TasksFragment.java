@@ -220,7 +220,7 @@ public class TasksFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                new TaskRemindDatePopupWindow(TasksFragment.this,  chipRemindMeDate);
+                new TaskRemindDatePopupWindow(TasksFragment.this, chipRemindMeDate);
             }
         });
 
@@ -290,8 +290,9 @@ public class TasksFragment extends Fragment {
                     } catch (ParseException e) {
                         remindMeDate = new Date();
                     }
+                    remindMeDate = (remindMeDate == null ? new Date() : remindMeDate);
 
-                    MyTask myTask = new MyTask(timeLineId, s, false, remindMeDate, checkBoxRepeat.isChecked());
+                    MyTask myTask = new MyTask(timeLineId, s, false, remindMeDate, new Date(), checkBoxRepeat.isChecked());
                     et.setText("");
                     myViewModel.insertTasks(myTask);
                     //请求隐藏键盘
@@ -300,8 +301,6 @@ public class TasksFragment extends Fragment {
                 }
             }
         });
-
-
 
 
         /**

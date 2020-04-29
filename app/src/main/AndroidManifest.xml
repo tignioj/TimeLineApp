@@ -16,7 +16,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".floating_tasks.FloatingWindowService"
+        <service android:name=".tasks.UpdateTasksService"
             android:enabled="true"
             />
     </application>

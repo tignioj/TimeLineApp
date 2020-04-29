@@ -1,11 +1,18 @@
 package com.tignioj.timelineapp.utils;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.util.Log;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 public class CommonUtils {
+
+
     public static int getScreenWidth() {
         return Resources.getSystem().getDisplayMetrics().widthPixels;
     }
@@ -38,6 +45,8 @@ public class CommonUtils {
         //开始时间比现在早， 现在比结束时间早
         return cStart.before(cNow) && cNow.before(cEnd);
     }
+
+
 
 
 }
