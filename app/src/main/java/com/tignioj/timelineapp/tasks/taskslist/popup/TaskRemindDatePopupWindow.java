@@ -1,6 +1,5 @@
 package com.tignioj.timelineapp.tasks.taskslist.popup;
 
-import android.os.Build;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,17 +8,17 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+
 import com.google.android.material.chip.Chip;
-import com.tignioj.timelineapp.MainActivity;
 import com.tignioj.timelineapp.R;
-import com.tignioj.timelineapp.tasks.taskslist.TasksFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class TaskPopupWindow extends PopupWindow {
-    TasksFragment context;
+public class TaskRemindDatePopupWindow extends PopupWindow {
+    Fragment context;
     Chip chip;
 
     public Chip getChip() {
@@ -27,8 +26,8 @@ public class TaskPopupWindow extends PopupWindow {
     }
 
 
-    public TaskPopupWindow(final TasksFragment context, View inflate, final Chip chip) {
-        super(inflate, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+    public TaskRemindDatePopupWindow(final Fragment context, final Chip chip) {
+        super(context.getLayoutInflater().inflate(R.layout.task_pick_date_popup, null), ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
         this.context = context;
         this.chip = chip;
         textViewToday = getContentView().findViewById(R.id.tv_today);
@@ -73,7 +72,7 @@ public class TaskPopupWindow extends PopupWindow {
         textViewPickDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TaskDatePicker taskDatePicker = new TaskDatePicker(TaskPopupWindow.this);
+                TaskDatePicker taskDatePicker = new TaskDatePicker(TaskRemindDatePopupWindow.this);
                 taskDatePicker.show(context.requireActivity().getSupportFragmentManager().beginTransaction(), "pick date");
             }
         });
@@ -87,6 +86,7 @@ public class TaskPopupWindow extends PopupWindow {
             }
         });
     }
+
     TextView textViewToday, textViewTomorrow, textViewPickDate;
     CheckBox checkBoxRepeat;
 }

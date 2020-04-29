@@ -15,10 +15,10 @@ import com.google.android.material.chip.Chip;
 import java.util.Calendar;
 
 public class TaskDatePicker extends DialogFragment implements DatePickerDialog.OnDateSetListener {
-    TaskPopupWindow taskPopupWindow;
+    TaskRemindDatePopupWindow taskRemindDatePopupWindow;
 
-    public TaskDatePicker(TaskPopupWindow taskPopupWindow) {
-        this.taskPopupWindow = taskPopupWindow;
+    public TaskDatePicker(TaskRemindDatePopupWindow taskRemindDatePopupWindow) {
+        this.taskRemindDatePopupWindow = taskRemindDatePopupWindow;
     }
 
     @NonNull
@@ -37,9 +37,9 @@ public class TaskDatePicker extends DialogFragment implements DatePickerDialog.O
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 //        SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd");
-        Chip chip = taskPopupWindow.getChip();
+        Chip chip = taskRemindDatePopupWindow.getChip();
         chip.setText(year + "-" + (month+1) + "-" + dayOfMonth);
         chip.setCloseIconVisible(true);
-        taskPopupWindow.dismiss();
+        taskRemindDatePopupWindow.dismiss();
     }
 }

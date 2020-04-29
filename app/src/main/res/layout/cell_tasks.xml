@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="35dp"
     android:clickable="true">
 
     <androidx.constraintlayout.widget.Guideline
@@ -11,14 +11,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.15" />
+        app:layout_constraintGuide_begin="35dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.85" />
+        app:layout_constraintGuide_end="82dp" />
 
     <TextView
         android:id="@+id/tv_sequence_number"
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/guideline5"
+        app:layout_constraintEnd_toStartOf="@+id/tv_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="1" />
@@ -49,11 +49,31 @@
     <CheckBox
         android:id="@+id/checkbox_hasfinished"
         style="@style/Widget.AppCompat.CompoundButton.CheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
+        android:layout_width="28dp"
+        android:layout_height="23dp"
+        android:scrollbarDefaultDelayBeforeFade="0"
+        android:textSize="0sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline6"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_remind_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@+id/checkbox_hasfinished"
+        app:layout_constraintStart_toEndOf="@+id/checkbox_hasfinished"
+        app:layout_constraintTop_toTopOf="@+id/checkbox_hasfinished"
+        app:layout_constraintVertical_bias="0.0"
+        tools:text="2020-4-28" />
+
+    <TextView
+        android:id="@+id/tv_repeat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10sp"
+        app:layout_constraintStart_toEndOf="@+id/checkbox_hasfinished"
+        app:layout_constraintTop_toBottomOf="@+id/tv_remind_date"
+        tools:text="repeat" />
 </androidx.constraintlayout.widget.ConstraintLayout>

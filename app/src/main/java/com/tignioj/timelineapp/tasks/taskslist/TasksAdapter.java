@@ -12,9 +12,12 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.chip.Chip;
 import com.tignioj.timelineapp.MyViewModel;
 import com.tignioj.timelineapp.R;
 import com.tignioj.timelineapp.entity.MyTask;
+
+import java.text.SimpleDateFormat;
 
 
 public class TasksAdapter extends ListAdapter<MyTask, TasksAdapter.MyViewHolder> {
@@ -68,15 +71,24 @@ public class TasksAdapter extends ListAdapter<MyTask, TasksAdapter.MyViewHolder>
     //更改视图数据
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        holder.checkBoxHasFinished.setChecked(getItem(position).isHasFinish());
-        holder.textViewTaskContent.setText(getItem(position).getContent());
+        MyTask item = getItem(position);
+
+        holder.checkBoxHasFinished.setChecked(item.isHasFinish());
+        holder.textViewTaskContent.setText(item.getContent());
 //        holder.textViewSequenceNumber.setText(String.valueOf(position + 1));
         //解决序号显示错误问题(每次添加都是1)
         holder.textViewSequenceNumber.setText(String.valueOf(holder.getAdapterPosition() + 1));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        holder.textViewRemindDate.setText(sdf.format(item.getRemindMeDate()));
+        if (item.isRepeat()) {
+            holder.textViewRepeat.setText("Repeat");
+        } else {
+            holder.textViewRepeat.setText("Single");
+        }
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        private TextView textViewSequenceNumber, textViewTaskContent;
+        private TextView textViewSequenceNumber, textViewTaskContent, textViewRepeat, textViewRemindDate;
         private CheckBox checkBoxHasFinished;
 
         public TextView getTextViewSequenceNumber() {
@@ -91,11 +103,14 @@ public class TasksAdapter extends ListAdapter<MyTask, TasksAdapter.MyViewHolder>
             return checkBoxHasFinished;
         }
 
+
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewSequenceNumber = itemView.findViewById(R.id.tv_sequence_number);
             textViewTaskContent = itemView.findViewById(R.id.tv_content);
             checkBoxHasFinished = itemView.findViewById(R.id.checkbox_hasfinished);
+            textViewRemindDate = itemView.findViewById(R.id.tv_remind_date);
+            textViewRepeat = itemView.findViewById(R.id.tv_repeat);
         }
     }
 }

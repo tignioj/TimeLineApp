@@ -93,7 +93,6 @@ public class MyTask {
     public MyTask() {
     }
 
-
     @Override
     public String toString() {
         return "MyTask{" +
@@ -101,7 +100,7 @@ public class MyTask {
                 ", timeline=" + timeline +
                 ", content='" + content + '\'' +
                 ", hasFinish=" + hasFinish +
-                ", createTime=" + remindMeDate +
+                ", remindMeDate=" + remindMeDate +
                 ", repeat=" + repeat +
                 '}';
     }

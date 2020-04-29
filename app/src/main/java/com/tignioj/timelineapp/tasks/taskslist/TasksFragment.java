@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,8 +37,7 @@ import com.tignioj.timelineapp.MyViewModel;
 import com.tignioj.timelineapp.R;
 import com.tignioj.timelineapp.entity.MyTask;
 import com.google.android.material.snackbar.Snackbar;
-import com.tignioj.timelineapp.tasks.taskslist.popup.TaskDatePicker;
-import com.tignioj.timelineapp.tasks.taskslist.popup.TaskPopupWindow;
+import com.tignioj.timelineapp.tasks.taskslist.popup.TaskRemindDatePopupWindow;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -221,8 +219,8 @@ public class TasksFragment extends Fragment {
         chipRemindMeDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                View inflate = getLayoutInflater().inflate(R.layout.task_pick_date_popup, null);
-                new TaskPopupWindow(TasksFragment.this, inflate, chipRemindMeDate);
+
+                new TaskRemindDatePopupWindow(TasksFragment.this,  chipRemindMeDate);
             }
         });
 
@@ -350,7 +348,7 @@ public class TasksFragment extends Fragment {
                                 /*参数1：显示在哪个组件上？*/
                                 requireView().findViewById(R.id.fragment_tasks_view),
                                 /*参数2：显示的文字*/
-                                "删除了一个词汇",
+                                "删除了一个任务",
                                 /*参数3：显示时长*/
                                 Snackbar.LENGTH_SHORT
                                 /*监听按钮*/
