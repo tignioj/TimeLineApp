@@ -105,7 +105,7 @@ public class FloatingTimeLineFragment extends Fragment {
                         myViewModel.refreshFloatingTimeLines();
                         timeLinePoJoLiveData = myViewModel.getFloatingTimeLinePoJoListLiveData();
                         timeLinePoJoLiveData.observeForever(observer);
-                        Log.d("myTag", "update all timeline because day change");
+//                        Log.d("myTag", "update all timeline because day change");
                         break;
                     //根据时间更新数据
                     case UPDATE_TIMELINE_ON_TIME_CHANGE:
@@ -133,7 +133,7 @@ public class FloatingTimeLineFragment extends Fragment {
                         //循环TimeChange
                         message.what = UPDATE_TIMELINE_ON_TIME_CHANGE;
                         sendMessageDelayed(message, 1000);
-                        Log.d("myTag", "update highlight timeline" + this.i++);
+//                        Log.d("myTag", "update highlight timeline" + this.i++);
                         break;
                 }
             }

@@ -2,6 +2,7 @@ package com.tignioj.timelineapp.database;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.sqlite.db.SimpleSQLiteQuery;
@@ -24,7 +25,7 @@ public class MyTasksRepository {
         todayAllTasksLiveByCurrentTimeLine = tasksDao.getTodayAllTasksLiveByCurrentTimeLine();
     }
 
-    public LiveData<List<MyTask>> getTodayAllMyTasksLiveByTimeLineId(long timeLineId, boolean showOld, boolean showCompleted) {
+    public LiveData<List<MyTask>> getTodayAllMyTasksLiveByTimeLineId(long timeLineId, boolean showOld, boolean showCompleted, boolean showFuture) {
         String sql = "select * from myTask where timeline_id=?";
         ArrayList objs = new ArrayList();
         objs.add(timeLineId);
@@ -34,9 +35,32 @@ public class MyTasksRepository {
             objs.add(0);
         }
 
-        if (!showOld) {
-            sql += " and  date(datetime(remind_me_date / 1000 , 'unixepoch', 'localtime')) = date('now', 'localtime')  ";
+
+        String nsql = "";
+        if (!showOld && !showFuture) {
+            //只显示今天的
+            nsql = " and  date(datetime(remind_me_date / 1000 , 'unixepoch', 'localtime')) = date('now', 'localtime')  ";
+        } else if (!showOld && showFuture) {
+            //显示今天的和以后的
+            nsql = " and  date(datetime(remind_me_date / 1000 , 'unixepoch', 'localtime')) >= date('now', 'localtime')  ";
+        } else if (showOld && !showFuture) {
+            //只显示今天的和以往的
+            nsql = " and  date(datetime(remind_me_date / 1000 , 'unixepoch', 'localtime')) <= date('now', 'localtime')  ";
+        } else if (showCompleted && showFuture) {
+            //显示所有
+//            nsql = " and  date(datetime(remind_me_date / 1000 , 'unixepoch', 'localtime')) = date('now', 'localtime')  ";
         }
+
+
+        sql += nsql;
+
+//        if (!showFuture) {
+//            sql += " and  date(datetime(remind_me_date / 1000 , 'unixepoch', 'localtime')) = date('now', 'localtime')  ";
+//        }
+
+
+        Log.d("myTag", sql);
+
         SimpleSQLiteQuery simpleSQLiteQuery = new SimpleSQLiteQuery(sql, objs.toArray());
 
         return tasksDao.getTodayAllTasksLiveByTimeLine(simpleSQLiteQuery);
@@ -69,7 +93,7 @@ public class MyTasksRepository {
         return tasksDao.getTodayAllRepeatTasksLive();
     }
 
-    public List<MyTask> getTodayAllMyTask(){
+    public List<MyTask> getTodayAllMyTask() {
         return tasksDao.getTodayAllTasks();
     }
 

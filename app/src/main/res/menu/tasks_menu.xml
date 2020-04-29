@@ -17,6 +17,16 @@
         />
 
     <item
+        android:id="@+id/menu_checkbox_show_future_tasks"
+        android:title="@string/menu_show_future_tasks"
+        app:showAsAction="never"
+        android:orderInCategory="5"
+        android:checkable="true"
+        android:checked="false"
+        app:actionViewClass="android.widget.CheckBox"
+        />
+
+    <item
         android:id="@+id/menu_switch"
         android:title="Switch"
         app:actionLayout="@layout/switch_item"

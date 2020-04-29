@@ -4,6 +4,7 @@
     <string name="tasks_clear_all">Clear all tasks</string>
     <string name="menu_switch_show_completed_task">Show completed tasks</string>
     <string name="menu_show_old_tasks">Show old tasks</string>
+    <string name="menu_show_future_tasks">Show future tasks</string>
     <string name="edit_tasks_dialog_title_message">Edit Task</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -11,6 +12,6 @@
     <string name="current_task_float_message">CURRENT TASKS</string>
     <string name="pop_up_window_switch_button_text">popup</string>
     <string name="tasks_repeat_text">repeat</string>
-    <string name="tasks_set_due_date_text">Set due date</string>
+    <string name="tasks_set_remind_me_date_text">Remind me date</string>
     <string name="tasks_input_tasks_name_text">Input Your Task Here</string>
 </resources>

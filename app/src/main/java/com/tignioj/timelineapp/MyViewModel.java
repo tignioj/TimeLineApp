@@ -124,8 +124,8 @@ public class MyViewModel extends AndroidViewModel {
         timeLineRepository.updateTimeLines(timeLines);
     }
 
-    public LiveData<List<MyTask>> getTodayMyTaskLiveDataByTimeLineId(long timeLineId, boolean showOld, boolean showCompleted) {
-        return myTasksRepository.getTodayAllMyTasksLiveByTimeLineId(timeLineId, showOld, showCompleted);
+    public LiveData<List<MyTask>> getTodayMyTaskLiveDataByTimeLineId(long timeLineId, boolean showOld, boolean showCompleted, boolean showFuture) {
+        return myTasksRepository.getTodayAllMyTasksLiveByTimeLineId(timeLineId, showOld, showCompleted,  showFuture);
     }
 
     /**

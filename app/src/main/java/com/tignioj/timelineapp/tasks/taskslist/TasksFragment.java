@@ -48,6 +48,7 @@ public class TasksFragment extends Fragment {
     private static final String SHP_SHOW_OLD = "is_show_old_tasks";
     private static final String SHP_SHOW_FINISHED = "is_show_finished_tasks";
     private static final String DB_TASKS_SHOWING_SETTING = "db_tasks_show_setting";
+    private static final String SHP_SHOW_FUTURE = "is_show_future_tasks";
     private MyViewModel myViewModel;
     private long timeLineId;
     LiveData<List<MyTask>> myTaskLiveData;
@@ -73,6 +74,7 @@ public class TasksFragment extends Fragment {
 
     private boolean showOld;
     private boolean showCompleted;
+    private boolean showFuture;
 
     public TasksFragment() {
         // Required empty public constructor
@@ -103,15 +105,17 @@ public class TasksFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_checkbox_show_old_tasks:
+            case R.id.menu_checkbox_show_future_tasks:
                 //加载用户偏好
-                CheckBox checkBox = (CheckBox) item.getActionView();
+                CheckBox checkBoxShowOld = (CheckBox) item.getActionView();
                 if (item.isChecked()) {
-                    checkBox.setChecked(false);
+                    checkBoxShowOld.setChecked(false);
                     item.setChecked(false);
                 } else {
-                    checkBox.setChecked(true);
+                    checkBoxShowOld.setChecked(true);
                     item.setChecked(true);
                 }
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -124,18 +128,21 @@ public class TasksFragment extends Fragment {
 
         boolean isShowOld = shp.getBoolean(SHP_SHOW_OLD, false);
         boolean isShowFinished = shp.getBoolean(SHP_SHOW_FINISHED, false);
+        boolean isShowFuture = shp.getBoolean(SHP_SHOW_FUTURE, false);
 
         Switch aSwitch = (Switch) menu.findItem(R.id.menu_switch).getActionView().findViewById(R.id.switchButton);
         aSwitch.setChecked(isShowFinished);
 
         //在Menu里面,item和checkBox是两个东西，checkBox的值和item的值并不同步，因此要设置两个值
         MenuItem checkItem = menu.findItem(R.id.menu_checkbox_show_old_tasks);
-        CheckBox checkBox = (CheckBox) menu.findItem(R.id.menu_checkbox_show_old_tasks).getActionView();
-        checkBox.setChecked(isShowOld);
+        CheckBox checkBoxShowOldTasks = (CheckBox) menu.findItem(R.id.menu_checkbox_show_old_tasks).getActionView();
+        CheckBox checkBoxShowFuture = (CheckBox) menu.findItem(R.id.menu_checkbox_show_future_tasks).getActionView();
+        checkBoxShowOldTasks.setChecked(isShowOld);
+        checkBoxShowFuture.setChecked(isShowFuture);
         checkItem.setChecked(isShowOld);
 
         //监听checkbox
-        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        checkBoxShowOldTasks.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 SharedPreferences.Editor edit = shp.edit();
@@ -147,7 +154,7 @@ public class TasksFragment extends Fragment {
                     showOld = true;
                 }
                 edit.putBoolean(SHP_SHOW_OLD, showOld);
-                myTaskLiveData = myViewModel.getTodayMyTaskLiveDataByTimeLineId(timeLineId, showOld, showCompleted);
+                myTaskLiveData = myViewModel.getTodayMyTaskLiveDataByTimeLineId(timeLineId, showOld, showCompleted, showFuture);
                 myTaskLiveData.observe(requireActivity(), new Observer<List<MyTask>>() {
                     @Override
                     public void onChanged(List<MyTask> myTasks) {
@@ -158,6 +165,27 @@ public class TasksFragment extends Fragment {
                 edit.apply();
             }
         });
+
+        checkBoxShowFuture.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences.Editor edit = shp.edit();
+                myTaskLiveData.removeObservers(requireActivity());
+                showFuture = isChecked ? true : false;
+                edit.putBoolean(SHP_SHOW_FUTURE, showFuture);
+                myTaskLiveData = myViewModel.getTodayMyTaskLiveDataByTimeLineId(timeLineId, showOld, showCompleted, showFuture);
+                myTaskLiveData.observe(requireActivity(), new Observer<List<MyTask>>() {
+                    @Override
+                    public void onChanged(List<MyTask> myTasks) {
+                        allTasks = myTasks;
+                        tasksAdapter.submitList(myTasks);
+                    }
+                });
+                edit.apply();
+
+            }
+        });
+
 
         //监听Switch
         aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -171,7 +199,7 @@ public class TasksFragment extends Fragment {
                     showCompleted = false;
                 }
                 edit.putBoolean(SHP_SHOW_FINISHED, showCompleted);
-                myTaskLiveData = myViewModel.getTodayMyTaskLiveDataByTimeLineId(timeLineId, showOld, showCompleted);
+                myTaskLiveData = myViewModel.getTodayMyTaskLiveDataByTimeLineId(timeLineId, showOld, showCompleted, showFuture);
                 myTaskLiveData.observe(requireActivity(), new Observer<List<MyTask>>() {
                     @Override
                     public void onChanged(List<MyTask> myTasks) {
@@ -212,8 +240,9 @@ public class TasksFragment extends Fragment {
         SharedPreferences shp = requireActivity().getSharedPreferences(DB_TASKS_SHOWING_SETTING, Context.MODE_PRIVATE);
         boolean isShowOld = shp.getBoolean(SHP_SHOW_OLD, false);
         boolean isShowFinished = shp.getBoolean(SHP_SHOW_FINISHED, false);
+        boolean isShowFuture = shp.getBoolean(SHP_SHOW_FUTURE, false);
 
-        myTaskLiveData = myViewModel.getTodayMyTaskLiveDataByTimeLineId(timeLineId, isShowOld, isShowFinished);
+        myTaskLiveData = myViewModel.getTodayMyTaskLiveDataByTimeLineId(timeLineId, isShowOld, isShowFinished, isShowFuture);
 
         et = requireView().findViewById(R.id.et_task);
         chipRemindMeDate.setOnClickListener(new View.OnClickListener() {
