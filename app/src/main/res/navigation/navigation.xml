@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/timeLineFragment">
+
+    <fragment
+        android:id="@+id/timeLineFragment"
+        android:name="com.tignioj.timelineapp.timeline.timelinelist.TimeLineFragment"
+        android:label="TimeLine List"
+        tools:layout="@layout/fragment_time_line">
+        <action
+            android:id="@+id/action_timeLineFragment_to_addTimeLineFragment"
+            app:destination="@id/addTimeLineFragment" />
+        <action
+            android:id="@+id/action_timeLineFragment_to_tasksFragment"
+            app:destination="@id/fragment_tasks_view" />
+    </fragment>
+    <fragment
+        android:id="@+id/addTimeLineFragment"
+        android:name="com.tignioj.timelineapp.timeline.addtimeline.AddTimeLineFragment"
+        android:label="Add TimeLine"
+        tools:layout="@layout/fragment_add_time_line" />
+    <fragment
+        android:id="@+id/fragment_tasks_view"
+        android:name="com.tignioj.timelineapp.tasks.taskslist.TasksFragment"
+        android:label="Add Tasks"
+        tools:layout="@layout/fragment_tasks" />
+    <fragment
+        android:id="@+id/floatingTasksFragment"
+        android:name="com.tignioj.timelineapp.floating_tasks.FloatingTasksFragment"
+        android:label="fragment_floating_window"
+        tools:layout="@layout/fragment_floating_window" >
+        <action
+            android:id="@+id/action_floatingWindowFragment_to_timeLineFragment"
+            app:destination="@id/timeLineFragment" />
+        <action
+            android:id="@+id/action_floatingWindowFragment_to_fragment_tasks_view"
+            app:destination="@id/fragment_tasks_view" />
+    </fragment>
+</navigation>

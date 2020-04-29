@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<transitionManager xmlns:android="http://schemas.android.com/apk/res/android">
+    <transition>
+        <!-- The drawables used here can be solid colors, gradients, shapes, images, etc. -->
+        <!--        <item android:drawable="@drawable/original_state" />-->
+        <!--        <item android:drawable="@drawable/new_state" />-->
+<!--        <item android:drawable="#FF0000" />-->
+
+<!--        <item android:drawable="#00FF00" />-->
+
+        <!--        <item android:drawable="@drawable/original_state" />-->
+        <!--        <item android:drawable="@drawable/new_state" />-->
+    </transition>
+</transitionManager>
