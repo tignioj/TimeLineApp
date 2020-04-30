@@ -1,6 +1,7 @@
 package com.tignioj.timelineapp.floating_timeline;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -13,6 +14,7 @@ import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LiveData;
@@ -83,7 +85,7 @@ public class FloatingTimeLineFragment extends Fragment {
         viewInWindowManager = inflater.inflate(R.layout.fragment_floating_time_line, container, false);
         if (!myViewModel.isHasTimeLineFloating()) {
             WindowManager wm = (WindowManager) requireActivity().getSystemService(Context.WINDOW_SERVICE);
-            WindowManager.LayoutParams p = WindowManagerUtils.getWindowManagerTimeLineParams();
+            WindowManager.LayoutParams p = WindowManagerUtils.getFloatingTimeLinesWindowManagerParams();
             myViewModel.setHasTimeLineFloating(true);
             wm.addView(viewInWindowManager, p);
         }
@@ -105,7 +107,7 @@ public class FloatingTimeLineFragment extends Fragment {
                         myViewModel.refreshFloatingTimeLines();
                         timeLinePoJoLiveData = myViewModel.getFloatingTimeLinePoJoListLiveData();
                         timeLinePoJoLiveData.observeForever(observer);
-//                        Log.d("myTag", "update all timeline because day change");
+                        Log.d("myTag", "update all timeline because day change");
                         break;
                     //根据时间更新数据
                     case UPDATE_TIMELINE_ON_TIME_CHANGE:
@@ -177,13 +179,24 @@ public class FloatingTimeLineFragment extends Fragment {
     private boolean isEnd = false;
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onStart() {
+        super.onStart();
+        isEnd = false;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public void onDestroy() {
+        Log.d("myTag", "destroy");
+        super.onDestroy();
         //结束时，停止handler
         isEnd = true;
 
-        //移除悬浮窗
-        WindowManager wm = (WindowManager) requireActivity().getSystemService(Context.WINDOW_SERVICE);
-        wm.removeView(viewInWindowManager);
+        if (viewInWindowManager.isAttachedToWindow()) {
+            //移除悬浮窗
+            Log.d("myTag", "remove Floating TimeLine");
+            WindowManager wm = (WindowManager) requireActivity().getSystemService(Context.WINDOW_SERVICE);
+            wm.removeView(viewInWindowManager);
+        }
     }
 }

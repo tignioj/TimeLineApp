@@ -7,7 +7,7 @@ import android.view.Gravity;
 import android.view.WindowManager;
 
 public class WindowManagerUtils {
-    public static WindowManager.LayoutParams getWindowManagerParams() {
+    public static WindowManager.LayoutParams getFloatingTasksWindowManagerParams() {
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -24,7 +24,7 @@ public class WindowManagerUtils {
     }
 
 
-    public static WindowManager.LayoutParams getWindowManagerTimeLineParams() {
+    public static WindowManager.LayoutParams getFloatingTimeLinesWindowManagerParams() {
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,

@@ -67,6 +67,7 @@ public class UpdateTasksService extends Service {
     }
 
     MyTasksRepository myTasksRepository;
+    //响应增删改查数据
     LiveData<List<MyTask>> todayAllMyTasksLive;
     //保存在内存上今天的数据
     List<MyTask> todayAllMyTasks;
@@ -85,8 +86,11 @@ public class UpdateTasksService extends Service {
     }
 
 
-    private static final String SHP_TODAY_STRING = "TODAY_STRING";
+    //shp文件, 存放今天日期字符串
     private static final String SHP_DB_MY_DATE = "SHP_DB_MY_DATE";
+    //存储在shp里面的日期的key
+    private static final String SHP_TODAY_STRING = "TODAY_STRING";
+    //把存储在shp里面的日期加载到内存, 用来记录日期是否变化
     private static String dayStoreInShp;
 
     /**
@@ -164,14 +168,16 @@ public class UpdateTasksService extends Service {
                 try {
                     while (!isEnd) {
                         Thread.sleep(1000);
-                        //TODO 根据repeat 更新timeline
+                        //每秒钟判断一次日期是否变化
                         long dayDiff = dayDiff(getApplicationContext());
 
+//                        Log.d("myTag", "diff:" + dayDiff);
 
                         //表明今天没变化
                         if (dayDiff == 0) {
                             continue;
                         }
+
 
                         updateFloatingTimeLine();
                         updateTimeLine();
@@ -183,7 +189,6 @@ public class UpdateTasksService extends Service {
                             //更新数据库数据
                             for (int i = 0; i < todayAllMyTasks.size(); i++) {
                                 MyTask myTask = todayAllMyTasks.get(i);
-//                                MyTask nt = newDayTasks.get(i);
                                 if (newDayTasks.contains(myTask) || !myTask.isRepeat()) {
                                     continue;
                                 }
@@ -234,7 +239,7 @@ public class UpdateTasksService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        isEnd = false;
         return super.onStartCommand(intent, flags, startId);
     }
-
 }

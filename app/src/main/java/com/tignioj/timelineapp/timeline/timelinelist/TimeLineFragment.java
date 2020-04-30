@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -49,6 +50,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.tignioj.timelineapp.floating_tasks.FloatingTasksFragment;
 import com.tignioj.timelineapp.floating_timeline.FloatingTimeLineFragment;
 import com.tignioj.timelineapp.utils.CommonUtils;
+import com.tignioj.timelineapp.utils.WindowManagerUtils;
 
 import java.util.List;
 
@@ -148,22 +150,28 @@ public class TimeLineFragment extends Fragment {
         FragmentManager sf = requireActivity().getSupportFragmentManager();
         Fragment floating_tasks = sf.findFragmentByTag(GlobalConfiguration.FLOATING_TASKS_FRAGMENT_TAG);
         Fragment floating_timeline = sf.findFragmentByTag(GlobalConfiguration.FLOATING_TIME_LINE_FRAGMENT_TAG);
-        if (floating_tasks == null) {
-            floating_tasks = new FloatingTasksFragment();
-        }
-        if (floating_timeline == null) {
-            floating_timeline = new FloatingTimeLineFragment();
-        }
+        if (floating_tasks == null) floating_tasks = new FloatingTasksFragment();
+        if (floating_timeline == null) floating_timeline = new FloatingTimeLineFragment();
 
         FragmentTransaction ft = sf.beginTransaction();
         if (value) {
             Toast.makeText(requireActivity().getApplicationContext(), "悬浮窗状态:开启", Toast.LENGTH_SHORT).show();
             if (floating_tasks.getView() == null) {
                 ft.add(floating_tasks, GlobalConfiguration.FLOATING_TASKS_FRAGMENT_TAG);
+            } else if (!floating_tasks.getView().isAttachedToWindow()) {
+                WindowManager wm = (WindowManager) requireActivity().getSystemService(Context.WINDOW_SERVICE);
+                WindowManager.LayoutParams p = WindowManagerUtils.getFloatingTasksWindowManagerParams();
+                wm.addView(floating_tasks.getView(), p);
             }
             if (floating_timeline.getView() == null) {
                 ft.add(floating_timeline, GlobalConfiguration.FLOATING_TIME_LINE_FRAGMENT_TAG);
+            } else if (!floating_timeline.getView().isAttachedToWindow()) {
+                WindowManager wm = (WindowManager) requireActivity().getSystemService(Context.WINDOW_SERVICE);
+                WindowManager.LayoutParams p = WindowManagerUtils.getFloatingTimeLinesWindowManagerParams();
+                wm.addView(floating_timeline.getView(), p);
             }
+
+
         } else {
             if (floating_tasks.getView() != null) {
                 ft.remove(floating_tasks);
@@ -191,9 +199,11 @@ public class TimeLineFragment extends Fragment {
         aSwitch.setChecked(isShowFloating);
 
         myViewModel.getIsFloating().setValue(isShowFloating);
+        Log.d("myTag", "onCreateOptionsMenu");
         myViewModel.getIsFloating().observe(requireActivity(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
+                Log.d("myTag", "checkFloatingPermission");
                 checkFloatingPermission(aBoolean);
             }
         });
@@ -205,7 +215,6 @@ public class TimeLineFragment extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 SharedPreferences.Editor edit = shp.edit();
                 if (isChecked) {
-                    //TODO 关闭悬浮窗
                     myViewModel.getIsFloating().setValue(true);
                 } else {
                     myViewModel.getIsFloating().setValue(false);
@@ -288,9 +297,9 @@ public class TimeLineFragment extends Fragment {
                             }
                         }
                         Message message = new Message();
-                        message.what = UPDATE_TIMELINE_LIST_ON_DAY_CHANGE;
+                        message.what = UPDATE_TIMELINE_LIST_ON_TIME_CHANGE;
                         sendMessageDelayed(message, 1000);
-                        Log.d("myTag", "update timeline list" + i++);
+//                        Log.d("myTag", "update timeline list" + i++);
                 }
             }
 
@@ -442,6 +451,6 @@ public class TimeLineFragment extends Fragment {
         isProgramInBackground = false;
         Message message = new Message();
         message.what = UPDATE_TIMELINE_LIST_ON_TIME_CHANGE;
-//        handler.sendMessageDelayed(message, 1000);
+        handler.sendMessageDelayed(message, 1000);
     }
 }

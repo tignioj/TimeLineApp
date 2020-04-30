@@ -1,6 +1,7 @@
 package com.tignioj.timelineapp.floating_tasks;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
@@ -98,7 +100,7 @@ public class FloatingTasksFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         this.rcv = view.findViewById(R.id.rcv_floating);
         view.setOnTouchListener(new View.OnTouchListener() {
-            private WindowManager.LayoutParams updatedParameters = WindowManagerUtils.getWindowManagerParams();
+            private WindowManager.LayoutParams updatedParameters = WindowManagerUtils.getFloatingTasksWindowManagerParams();
             int x, y;
             float touchedX, touchedY;
 
@@ -132,7 +134,7 @@ public class FloatingTasksFragment extends Fragment {
         viewInWindowManager = inflater.inflate(R.layout.fragment_floating_window, container, false);
         if (!myViewModel.isHasTasksFloating()) {
             WindowManager wm = (WindowManager) requireActivity().getSystemService(Context.WINDOW_SERVICE);
-            WindowManager.LayoutParams p = WindowManagerUtils.getWindowManagerParams();
+            WindowManager.LayoutParams p = WindowManagerUtils.getFloatingTasksWindowManagerParams();
             viewInWindowManager.setVisibility(View.INVISIBLE);
             myViewModel.setHasTasksFloating(true);
             wm.addView(viewInWindowManager, p);
@@ -140,14 +142,17 @@ public class FloatingTasksFragment extends Fragment {
         return viewInWindowManager;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
-        //移除悬浮窗
-        WindowManager wm = (WindowManager) requireActivity().getSystemService(Context.WINDOW_SERVICE);
-        wm.removeView(viewInWindowManager);
+        if (viewInWindowManager.isAttachedToWindow()) {
+            //移除悬浮窗
+            WindowManager wm = (WindowManager) requireActivity().getSystemService(Context.WINDOW_SERVICE);
+            wm.removeView(viewInWindowManager);
+        }
     }
+
 
     /**
      * 更新悬浮窗的数据

@@ -110,6 +110,8 @@ public class TimeLineAdapter extends ListAdapter<TimeLineWithTaskCountsPoJo, Tim
 //            );
 //            /*开启动画*/
 //            objectAnimator.start();
+        } else {
+            holder.itemView.setBackgroundColor(Color.WHITE);
         }
 
         //高亮未完成任务

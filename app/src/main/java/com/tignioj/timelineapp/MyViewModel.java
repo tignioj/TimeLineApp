@@ -40,6 +40,9 @@ public class MyViewModel extends AndroidViewModel {
         return isFloating;
     }
 
+    //程序是否结束
+    private boolean applicationEnd;
+
 
     public boolean isHasTimeLineFloating() {
         return hasTimeLineFloating;
