@@ -5,13 +5,12 @@
     android:layout_height="match_parent">
 
     <Switch
-        android:id="@+id/switchButton"
+        android:id="@+id/show_completed_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:text="@string/menu_switch_show_completed_task"
         tools:text="@string/menu_switch_show_completed_task" />
-
 
 
 </RelativeLayout>

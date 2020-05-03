@@ -27,7 +27,7 @@
         />
 
     <item
-        android:id="@+id/menu_switch"
+        android:id="@+id/show_completed_item"
         android:title="Switch"
         app:actionLayout="@layout/switch_item"
         app:showAsAction="always" />

@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -184,6 +185,14 @@ public class TimeLineFragment extends Fragment {
         ft.commit();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.timeLinePopupItem:
+                aSwitch.setChecked(item.isChecked());
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     //悬浮窗开关
     Switch aSwitch;
@@ -194,7 +203,7 @@ public class TimeLineFragment extends Fragment {
 
         //加载用户偏好
         final SharedPreferences shp = requireActivity().getSharedPreferences(DB_TIMELINE_SHOWING_SETTING, Context.MODE_PRIVATE);
-        aSwitch = (Switch) menu.findItem(R.id.time_line_switch_floating).getActionView().findViewById(R.id.switchButton);
+        aSwitch = (Switch) menu.findItem(R.id.timeLinePopupItem).getActionView().findViewById(R.id.switchButton);
         boolean isShowFloating = shp.getBoolean(SHP_SHOW_FLOATING, false);
         aSwitch.setChecked(isShowFloating);
 

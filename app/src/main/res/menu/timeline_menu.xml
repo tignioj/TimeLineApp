@@ -9,9 +9,14 @@
 <!--        app:showAsAction="always" />-->
 
 
+<!--    <item-->
+<!--        android:id="@+id/time_line_switch_floating"-->
+<!--        android:title="@string/pop_up_window_switch_button_text"-->
+<!--        app:actionLayout="@layout/floating_switch_item"-->
+<!--        app:showAsAction="always" />-->
     <item
-        android:id="@+id/time_line_switch_floating"
-        android:title="@string/pop_up_window_switch_button_text"
-        app:actionLayout="@layout/floating_switch_item"
+        android:id="@+id/timeLinePopupItem"
+        android:title="Switch"
+        app:actionLayout="@layout/timeline_switch_item"
         app:showAsAction="always" />
 </menu>

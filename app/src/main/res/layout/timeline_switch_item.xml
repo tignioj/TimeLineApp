@@ -11,7 +11,4 @@
         android:layout_centerInParent="true"
         android:text="@string/pop_up_window_switch_button_text"
         tools:text="@string/pop_up_window_switch_button_text" />
-
-
-
 </RelativeLayout>
