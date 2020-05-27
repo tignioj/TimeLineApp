@@ -31,6 +31,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class UpdateTasksService extends Service {
 
@@ -103,7 +104,7 @@ public class UpdateTasksService extends Service {
      * @return
      */
     private static long dayDiff(Context context) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
         String today = sdf.format(new Date());
         boolean b = today.equals(dayStoreInShp);
 
@@ -116,7 +117,7 @@ public class UpdateTasksService extends Service {
                 dayStoreInShp = today;
                 SharedPreferences.Editor edit = shp.edit();
                 edit.putString(SHP_TODAY_STRING, today);
-                edit.commit();
+                edit.apply();
                 return i;
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -136,12 +137,13 @@ public class UpdateTasksService extends Service {
         SharedPreferences shp = context.getSharedPreferences(SHP_DB_MY_DATE, Context.MODE_PRIVATE);
         dayStoreInShp = shp.getString(SHP_TODAY_STRING, null);
         //如果还没有存储今天的时间数据，则存一个进去
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+
         if (dayStoreInShp == null) {
             SharedPreferences.Editor edit = shp.edit();
             dayStoreInShp = sdf.format(new Date());
             edit.putString(SHP_TODAY_STRING, dayStoreInShp);
-            edit.commit();
+            edit.apply();
         }
     }
 
@@ -220,7 +222,7 @@ public class UpdateTasksService extends Service {
         }
         Handler handler = timeLineFragment.getHandler();
         Message message = new Message();
-        message.what = timeLineFragment.UPDATE_TIMELINE_LIST_ON_DAY_CHANGE;
+        message.what = TimeLineFragment.UPDATE_TIMELINE_LIST_ON_DAY_CHANGE;
         handler.sendMessage(message);
         Log.d("myTag", "update timeline");
     }
@@ -232,7 +234,7 @@ public class UpdateTasksService extends Service {
         }
         Handler handler = floatingTimeLineFragment.getHandler();
         Message message = new Message();
-        message.what = floatingTimeLineFragment.UPDATE_TIMELINE_ON_DAY_CHANGE;
+        message.what = FloatingTimeLineFragment.UPDATE_TIMELINE_ON_DAY_CHANGE;
         handler.sendMessage(message);
         Log.d("myTag", "update timeline");
     }

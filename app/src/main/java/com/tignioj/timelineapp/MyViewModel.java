@@ -158,6 +158,5 @@ public class MyViewModel extends AndroidViewModel {
 
     public void refreshTimeLines() {
         timeLineRepository.refreshTimeLines();
-
     }
 }

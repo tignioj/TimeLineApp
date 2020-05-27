@@ -14,4 +14,6 @@
     <string name="tasks_repeat_text">repeat</string>
     <string name="tasks_set_remind_me_date_text">Remind me date</string>
     <string name="tasks_input_tasks_name_text">Input Your Task Here</string>
+    <string name="timeline_repeat_text">Repeat</string>
+    <string name="timeline_single_text">Single</string>
 </resources>

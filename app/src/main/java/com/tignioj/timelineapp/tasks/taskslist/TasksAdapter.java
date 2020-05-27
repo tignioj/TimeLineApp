@@ -18,6 +18,7 @@ import com.tignioj.timelineapp.R;
 import com.tignioj.timelineapp.entity.MyTask;
 
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 
 public class TasksAdapter extends ListAdapter<MyTask, TasksAdapter.MyViewHolder> {
@@ -78,12 +79,12 @@ public class TasksAdapter extends ListAdapter<MyTask, TasksAdapter.MyViewHolder>
 //        holder.textViewSequenceNumber.setText(String.valueOf(position + 1));
         //解决序号显示错误问题(每次添加都是1)
         holder.textViewSequenceNumber.setText(String.valueOf(holder.getAdapterPosition() + 1));
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
         holder.textViewRemindDate.setText(sdf.format(item.getRemindMeDate()));
         if (item.isRepeat()) {
-            holder.textViewRepeat.setText("Repeat");
+            holder.textViewRepeat.setText(R.string.timeline_repeat_text);
         } else {
-            holder.textViewRepeat.setText("Single");
+            holder.textViewRepeat.setText(R.string.timeline_single_text);
         }
     }
 

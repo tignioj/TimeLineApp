@@ -13,9 +13,10 @@ import androidx.fragment.app.DialogFragment;
 import com.google.android.material.chip.Chip;
 
 import java.util.Calendar;
+import java.util.Objects;
 
 public class TaskDatePicker extends DialogFragment implements DatePickerDialog.OnDateSetListener {
-    TaskRemindDatePopupWindow taskRemindDatePopupWindow;
+    private TaskRemindDatePopupWindow taskRemindDatePopupWindow;
 
     public TaskDatePicker(TaskRemindDatePopupWindow taskRemindDatePopupWindow) {
         this.taskRemindDatePopupWindow = taskRemindDatePopupWindow;
@@ -29,7 +30,7 @@ public class TaskDatePicker extends DialogFragment implements DatePickerDialog.O
             int y = instance.get(Calendar.YEAR);
             int m = instance.get(Calendar.MONTH);
             int d = instance.get(Calendar.DAY_OF_MONTH);
-            return new DatePickerDialog(getContext(), this, y, m, d);
+            return new DatePickerDialog(requireContext(), this, y, m, d);
         }
         return null;
     }

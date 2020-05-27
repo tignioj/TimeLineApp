@@ -25,6 +25,7 @@ import com.google.android.material.chip.Chip;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class TimeLineAdapter extends ListAdapter<TimeLineWithTaskCountsPoJo, TimeLineAdapter.MyViewHolder> {
     private static final String LOG_TAG = "myTag";
@@ -78,7 +79,7 @@ public class TimeLineAdapter extends ListAdapter<TimeLineWithTaskCountsPoJo, Tim
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         final TimeLineWithTaskCountsPoJo tl = getItem(position);
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.CHINA);
         String summary = tl.timeLine.getSummary();
         holder.textViewSummary.setText(summary);
         holder.textViewStartTime.setText(sdf.format(tl.timeLine.getStartTime()));

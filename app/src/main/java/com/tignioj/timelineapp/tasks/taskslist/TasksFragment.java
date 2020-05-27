@@ -43,6 +43,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class TasksFragment extends Fragment {
     private static final String SHP_SHOW_OLD = "is_show_old_tasks";
@@ -120,7 +121,7 @@ public class TasksFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    Switch aSwitchShowCompleted;
+    private Switch aSwitchShowCompleted;
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.tasks_menu, menu);
@@ -131,7 +132,7 @@ public class TasksFragment extends Fragment {
         boolean isShowFinished = shp.getBoolean(SHP_SHOW_FINISHED, false);
         boolean isShowFuture = shp.getBoolean(SHP_SHOW_FUTURE, false);
 
-        aSwitchShowCompleted = (Switch) menu.findItem(R.id.show_completed_item).getActionView().findViewById(R.id.show_completed_switch);
+        aSwitchShowCompleted = menu.findItem(R.id.show_completed_item).getActionView().findViewById(R.id.show_completed_switch);
         aSwitchShowCompleted.setChecked(isShowFinished);
 
         //在Menu里面,item和checkBox是两个东西，checkBox的值和item的值并不同步，因此要设置两个值
@@ -306,7 +307,7 @@ public class TasksFragment extends Fragment {
                     //TODO 增加MyTask的字段：提醒日期，是否重复
 
                     Date remindMeDate;
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
                     try {
                         remindMeDate = sdf.parse((String) chipRemindMeDate.getText());
                     } catch (ParseException e) {

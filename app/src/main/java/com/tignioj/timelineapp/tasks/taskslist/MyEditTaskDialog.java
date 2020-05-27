@@ -27,6 +27,7 @@ import com.tignioj.timelineapp.tasks.taskslist.popup.TaskRemindDatePopupWindow;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * 自定义Dialog
@@ -67,7 +68,7 @@ public class MyEditTaskDialog extends DialogFragment {
 
         editText.setText(currentSwipeTask.getContent());
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
         chipRemindMeDate.setText(sdf.format(currentSwipeTask.getRemindMeDate()));
 
         chipRemindMeDate.setOnClickListener(new View.OnClickListener() {
@@ -102,7 +103,7 @@ public class MyEditTaskDialog extends DialogFragment {
             public void onClick(View v) {
                 //获取EditText的内容
                 currentSwipeTask.setContent(editText.getText().toString().trim());
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
                 Date parse;
                 try {
                     parse = sdf.parse(chipRemindMeDate.getText().toString());

@@ -17,6 +17,7 @@ import com.tignioj.timelineapp.entity.TimeLinePoJo;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class FloatingTimeLineAdapter extends ListAdapter<TimeLinePoJo, FloatingTimeLineAdapter.MyViewHolder> {
     protected FloatingTimeLineAdapter() {
@@ -61,7 +62,7 @@ public class FloatingTimeLineAdapter extends ListAdapter<TimeLinePoJo, FloatingT
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         TimeLinePoJo tl = getItem(position);
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.CHINA);
         String summary = tl.getTimeLine().getSummary();
         holder.textViewSummary.setText(summary);
         holder.textViewStartTime.setText(sdf.format(tl.getTimeLine().getStartTime()));

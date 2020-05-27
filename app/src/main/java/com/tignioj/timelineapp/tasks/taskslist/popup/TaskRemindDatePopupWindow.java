@@ -1,5 +1,6 @@
 package com.tignioj.timelineapp.tasks.taskslist.popup;
 
+import android.content.res.Resources;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import com.tignioj.timelineapp.R;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class TaskRemindDatePopupWindow extends PopupWindow {
     Fragment context;
@@ -32,11 +34,11 @@ public class TaskRemindDatePopupWindow extends PopupWindow {
         this.chip = chip;
         textViewToday = getContentView().findViewById(R.id.tv_today);
         textViewTomorrow = getContentView().findViewById(R.id.tv_tomorrow);
-        textViewPickDate = getContentView().findViewById(R.id.tv_pick_date);
+        TextView textViewPickDate = getContentView().findViewById(R.id.tv_pick_date);
 
         //在参数指定视图的左下角显示
 
-        int location[] = new int[2];
+        int[] location = new int[2];
         chip.getLocationOnScreen(location);
         //在参数指定视图的左下角显示
 //        showAsDropDown(chip, 0, -offsetY);
@@ -45,7 +47,7 @@ public class TaskRemindDatePopupWindow extends PopupWindow {
         textViewToday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
                 String format = simpleDateFormat.format(new Date());
                 Toast.makeText(context.requireActivity(), textViewToday.getText().toString(), Toast.LENGTH_SHORT).show();
                 chip.setText(format);
@@ -57,7 +59,7 @@ public class TaskRemindDatePopupWindow extends PopupWindow {
         textViewTomorrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
                 Toast.makeText(context.requireActivity(), textViewTomorrow.getText().toString(), Toast.LENGTH_SHORT).show();
                 Calendar calendar = simpleDateFormat.getCalendar();
                 calendar.setTime(new Date());
@@ -82,11 +84,11 @@ public class TaskRemindDatePopupWindow extends PopupWindow {
             @Override
             public void onClick(View v) {
                 chip.setCloseIconVisible(false);
-                chip.setText("Show popup");
+                chip.setText(getContentView().getResources().getString(R.string.pop_up_window_switch_button_text));
             }
         });
     }
 
-    TextView textViewToday, textViewTomorrow, textViewPickDate;
-    CheckBox checkBoxRepeat;
+    private TextView textViewToday;
+    private TextView textViewTomorrow;
 }

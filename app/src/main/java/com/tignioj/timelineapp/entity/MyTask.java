@@ -16,7 +16,9 @@ import java.util.Objects;
 //TODO 增加重复字段
 @Entity(
         indices = {@Index("timeline_id")},
-        foreignKeys = @ForeignKey(entity = TimeLine.class, parentColumns = "id", childColumns = "timeline_id", onDelete = ForeignKey.CASCADE, onUpdate = ForeignKey.CASCADE))
+        foreignKeys = @ForeignKey(entity = TimeLine.class, parentColumns = "id",
+                childColumns = "timeline_id",
+                onDelete = ForeignKey.CASCADE, onUpdate = ForeignKey.CASCADE))
 public class MyTask {
 
     @PrimaryKey(autoGenerate = true)
