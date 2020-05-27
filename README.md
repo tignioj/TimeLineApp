@@ -10,10 +10,10 @@
 
 # 截图
 
-[](resources/imgs/device-2020-05-27-203518.png)
+![](resources/imgs/device-2020-05-27-203518.png)
 
-[](resources/imgs/device-2020-05-27-203535.png)
+![](resources/imgs/device-2020-05-27-203535.png)
 
-[](resources/imgs/device-2020-05-27-203610.png)
+![](resources/imgs/device-2020-05-27-203610.png)
 
-[](resources/imgs/device-2020-05-27-203633.png)
+![](resources/imgs/device-2020-05-27-203633.png)
