@@ -10,10 +10,10 @@
 
 # 截图
 
-![](resources/imgs/device-2020-05-27-203518.png)
+![悬浮窗任务展示](resources/imgs/device-2020-05-27-203518.png)
 
-![](resources/imgs/device-2020-05-27-203535.png)
+![列表展示](resources/imgs/device-2020-05-27-203535.png)
 
-![](resources/imgs/device-2020-05-27-203610.png)
+![添加任务/任务列表](resources/imgs/device-2020-05-27-203610.png)
 
-![](resources/imgs/device-2020-05-27-203633.png)
+![添加列表](resources/imgs/device-2020-05-27-203633.png)
