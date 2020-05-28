@@ -8,6 +8,12 @@ android {
             keyPassword store_key_password
             storePassword store_password
         }
+        debug {
+            keyAlias store_key_alias
+            storeFile file(store_file)
+            keyPassword store_key_password
+            storePassword store_password
+        }
 
     }
     compileSdkVersion 29
