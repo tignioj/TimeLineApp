@@ -26,12 +26,8 @@ public class MyViewModel extends AndroidViewModel {
     private TimeLineRepository timeLineRepository;
     private MyTasksRepository myTasksRepository;
     private TimeLineUIRepository timeLineUIRepository;
-    //屏幕是否已经有了任务悬浮窗
-    private boolean hasTasksFloating;
-    //屏幕是否已经有了时间线悬浮窗
-    private boolean hasTimeLineFloating;
 
-    //是否开启悬浮窗
+    //配置文件中, 用户是否开启悬浮窗
     private MutableLiveData<Boolean> isFloating;
 
     public MutableLiveData<Boolean> getIsFloating() {
@@ -46,19 +42,19 @@ public class MyViewModel extends AndroidViewModel {
 
 
     public boolean isHasTimeLineFloating() {
-        return hasTimeLineFloating;
+        return timeLineUIRepository.isHasTimeLineFloating();
     }
 
     public void setHasTimeLineFloating(boolean hasTimeLineFloating) {
-        this.hasTimeLineFloating = hasTimeLineFloating;
+        timeLineUIRepository.setHasTimeLineFloating(hasTimeLineFloating);
     }
 
     public boolean isHasTasksFloating() {
-        return hasTasksFloating;
+        return timeLineUIRepository.getIsHasTasksFloating();
     }
 
     public void setHasTasksFloating(boolean hasTasksFloating) {
-        this.hasTasksFloating = hasTasksFloating;
+        timeLineUIRepository.setHasTasksFloating(hasTasksFloating);
     }
 
     public MyViewModel(@NonNull Application application) {

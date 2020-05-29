@@ -147,6 +147,7 @@ public class FloatingTasksFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         if (viewInWindowManager.isAttachedToWindow()) {
+            myViewModel.setHasTasksFloating(false);
             //移除悬浮窗
             WindowManager wm = (WindowManager) requireActivity().getSystemService(Context.WINDOW_SERVICE);
             wm.removeView(viewInWindowManager);

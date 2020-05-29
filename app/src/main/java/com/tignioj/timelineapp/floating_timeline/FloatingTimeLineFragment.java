@@ -193,6 +193,7 @@ public class FloatingTimeLineFragment extends Fragment {
         isEnd = true;
 
         if (viewInWindowManager.isAttachedToWindow()) {
+            myViewModel.setHasTimeLineFloating(false);
             //移除悬浮窗
             Log.d("myTag", "remove Floating TimeLine");
             WindowManager wm = (WindowManager) requireActivity().getSystemService(Context.WINDOW_SERVICE);
