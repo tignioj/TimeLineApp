@@ -1,4 +1,4 @@
-package com.tignioj.timelineapp.tasks;
+package com.tignioj.timelineapp.service;
 
 import android.app.Service;
 import android.content.Context;

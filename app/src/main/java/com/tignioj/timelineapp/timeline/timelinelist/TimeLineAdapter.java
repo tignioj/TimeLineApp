@@ -1,11 +1,8 @@
 package com.tignioj.timelineapp.timeline.timelinelist;
 
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.tignioj.timelineapp.MyViewModel;
 import com.tignioj.timelineapp.R;
 import com.tignioj.timelineapp.entity.TimeLineWithTaskCountsPoJo;
-import com.google.android.material.chip.Chip;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -84,13 +80,18 @@ public class TimeLineAdapter extends ListAdapter<TimeLineWithTaskCountsPoJo, Tim
         holder.textViewSummary.setText(summary);
         holder.textViewStartTime.setText(sdf.format(tl.timeLine.getStartTime()));
         holder.textViewEndTime.setText(sdf.format(tl.timeLine.getEndTime()));
-        holder.chip.setText(String.valueOf(tl.tasksCount));
+//        holder.chip.setText(String.valueOf(tl.tasksCount));
+        holder.textViewTasksCount.setText(String.valueOf(tl.tasksCount));
 
 
+        Drawable background = holder.itemView.getBackground();
         //高亮当前时间段
 //        if (betweenStartTimeAndEndTime(tl.timeLine.getStartTime(), tl.timeLine.getEndTime())) {
         if (tl.isCurrent()) {
-            holder.itemView.setBackgroundColor(Color.LTGRAY);
+//            holder.itemView.setBackgroundColor(Color.rgb(0xC5, 0x89, 0x33));
+//            C58933
+            holder.itemView.setBackgroundColor(Color.rgb(0x79, 0x86, 0xCB));
+//            7986CB
 //            ColorDrawable background = (ColorDrawable) holder.itemView.getRootView().getBackground();
 //            background.getBounds();
 
@@ -112,12 +113,13 @@ public class TimeLineAdapter extends ListAdapter<TimeLineWithTaskCountsPoJo, Tim
 //            /*开启动画*/
 //            objectAnimator.start();
         } else {
-            holder.itemView.setBackgroundColor(Color.WHITE);
+            holder.itemView.setBackground(background);
         }
 
         //高亮未完成任务
         if (tl.tasksCount > 0) {
-            holder.chip.setTextAppearance(R.style.fontForNotificationLandingPage);
+//            holder.chip.setTextAppearance(R.style.fontForNotificationLandingPage);
+            holder.textViewTasksCount.setTextColor(Color.RED);
         }
     }
 
@@ -149,15 +151,16 @@ public class TimeLineAdapter extends ListAdapter<TimeLineWithTaskCountsPoJo, Tim
 
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView textViewStartTime, textViewEndTime, textViewSummary;
-        Chip chip;
+        TextView textViewStartTime, textViewEndTime, textViewSummary, textViewTasksCount;
+//        Chip chip;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewStartTime = itemView.findViewById(R.id.tv_start);
             textViewEndTime = itemView.findViewById(R.id.tv_end);
             textViewSummary = itemView.findViewById(R.id.tv_summary);
-            chip = itemView.findViewById(R.id.chip_taskcount);
+//            chip = itemView.findViewById(R.id.chip_taskcount);
+            textViewTasksCount = itemView.findViewById(R.id.tv_time_line_tasks_count);
         }
     }
 }

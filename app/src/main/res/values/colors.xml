@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
     <color name="floating_text_color">#54000000</color>
+    <color name="floating_tasks_text_color">#AC000000</color>
+    <color name="colorPrimary">#7986CB</color>
+    <color name="colorPrimaryDark">#ff00ff</color>
+
+    <color name="colorAccent">#7986CB</color>
+    <!--        TextButton的enable=false时-->
+    <color name="colorOnSurface">#FFB74D</color>
+
+    <color name="colorOnPrimarySurface">#ff0000</color>
+    <color name="colorOnPrimary">#ffff00</color>
+<!--    <color name="color">#0000ff</color>-->
+    <color name="colorOnBackground">#aaaaaa</color>
+    <color name="colorSecondary">#aabb44</color>
+    <color name="text_color">#000000</color>
+    <color name="floating_tasks_background_color">#F0CFEAFA</color>
 </resources>

@@ -17,6 +17,7 @@
     <TextView
         android:id="@+id/tv_cell_floating"
         android:layout_width="0dp"
+        android:textColor="@color/floating_tasks_text_color"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"

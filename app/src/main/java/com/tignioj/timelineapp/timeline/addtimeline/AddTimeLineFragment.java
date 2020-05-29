@@ -185,6 +185,7 @@ public class AddTimeLineFragment extends Fragment {
             // Do something with the time chosen by the user
             c.set(Calendar.HOUR_OF_DAY, hourOfDay);
             c.set(Calendar.MINUTE, minute);
+            c.set(Calendar.SECOND, 0);
             switch (this.getTag()) {
                 case START_TIME_PICKER_TAG:
                     fragment.editTextStartTime.setText(sdf.format(c.getTime()));

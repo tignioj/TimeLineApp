@@ -14,8 +14,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
-import com.tignioj.timelineapp.tasks.UpdateTasksService;
-import com.tignioj.timelineapp.utils.CommonUtils;
+import com.tignioj.timelineapp.service.UpdateTasksService;
 
 public class MainActivity extends AppCompatActivity {
 

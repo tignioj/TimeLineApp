@@ -61,19 +61,29 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.87" />
 
-    <com.google.android.material.chip.Chip
-        android:id="@+id/chip_taskcount"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/tv_time_line_tasks_count"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:layout_marginLeft="2dp"
-        android:layout_marginEnd="2dp"
-        android:layout_marginRight="2dp"
-        android:text="1"
-        android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tv_summary"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="5" />
+
+    <!--    <com.google.android.material.chip.Chip-->
+    <!--        android:id="@+id/chip_taskcount"-->
+    <!--        android:layout_width="0dp"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginStart="2dp"-->
+    <!--        android:layout_marginLeft="2dp"-->
+    <!--        android:layout_marginEnd="2dp"-->
+    <!--        android:layout_marginRight="2dp"-->
+    <!--        android:text="1"-->
+    <!--        android:textAlignment="center"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toEndOf="@+id/tv_summary"-->
+    <!--        app:layout_constraintTop_toTopOf="parent" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
