@@ -1,5 +1,6 @@
 package com.tignioj.timelineapp.database;
 
+import android.app.Application;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -23,6 +24,14 @@ public class MyTasksRepository {
         this.tasksDao = timeLineDataBase.getTasksDao();
         this.allMyTaskLive = tasksDao.getAllTasksLive();
         todayAllTasksLiveByCurrentTimeLine = tasksDao.getTodayAllTasksLiveByCurrentTimeLine();
+    }
+
+    private static MyTasksRepository INSTANCE;
+    public static MyTasksRepository getInstance(Application application) {
+        if (INSTANCE == null) {
+            INSTANCE = new MyTasksRepository(application);
+        }
+        return INSTANCE;
     }
 
     public LiveData<List<MyTask>> getTodayAllMyTasksLiveByTimeLineId(long timeLineId, boolean showOld, boolean showCompleted, boolean showFuture) {

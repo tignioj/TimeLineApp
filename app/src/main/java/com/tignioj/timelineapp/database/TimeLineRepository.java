@@ -20,7 +20,18 @@ public class TimeLineRepository {
     //悬浮窗用的TimeLine
     private LiveData<List<TimeLinePoJo>> allFloatingTimeLineWithTodayTaskHasNoFinishedCountLive;
 
-    public TimeLineRepository(Context context) {
+
+    private static TimeLineRepository INSTANCE;
+
+    public static TimeLineRepository getInstance(Context context){
+        if (INSTANCE == null) {
+            INSTANCE = new TimeLineRepository(context);
+        }
+        return INSTANCE;
+    }
+
+
+    private TimeLineRepository(Context context) {
         TimeLineDataBase timeLineDataBase = TimeLineDataBase.getDataBase(context);
         this.timeLineDao = timeLineDataBase.getTimeLineDao();
         this.allTimeLineLive = timeLineDao.getAllTimeLinesLive();

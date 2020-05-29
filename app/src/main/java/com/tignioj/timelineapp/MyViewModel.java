@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.tignioj.timelineapp.database.MyTasksRepository;
 import com.tignioj.timelineapp.database.TimeLineRepository;
+import com.tignioj.timelineapp.database.TimeLineUIRepository;
 import com.tignioj.timelineapp.entity.MyTask;
 import com.tignioj.timelineapp.entity.MyTaskPoJo;
 import com.tignioj.timelineapp.entity.TimeLine;
@@ -24,6 +25,7 @@ public class MyViewModel extends AndroidViewModel {
 
     private TimeLineRepository timeLineRepository;
     private MyTasksRepository myTasksRepository;
+    private TimeLineUIRepository timeLineUIRepository;
     //屏幕是否已经有了任务悬浮窗
     private boolean hasTasksFloating;
     //屏幕是否已经有了时间线悬浮窗
@@ -34,8 +36,7 @@ public class MyViewModel extends AndroidViewModel {
 
     public MutableLiveData<Boolean> getIsFloating() {
         if (isFloating == null) {
-            isFloating = new MutableLiveData<>();
-            isFloating.setValue(false);
+            isFloating = timeLineUIRepository.getIsFloating();
         }
         return isFloating;
     }
@@ -62,8 +63,9 @@ public class MyViewModel extends AndroidViewModel {
 
     public MyViewModel(@NonNull Application application) {
         super(application);
-        myTasksRepository = new MyTasksRepository(application);
-        timeLineRepository = new TimeLineRepository(application);
+        timeLineUIRepository = TimeLineUIRepository.getInstance(application);
+        myTasksRepository = MyTasksRepository.getInstance(application);
+        timeLineRepository = TimeLineRepository.getInstance(application);
         this.timeLineListLiveData = timeLineRepository.getAllTimeLinesLive();
         this.timeLineWithTodayHasNoFinishedTasksCount = timeLineRepository.getAllTimeLineWithTodayTaskHasNoFinishedCountLive();
     }

@@ -143,18 +143,25 @@ public class TimeLineFragment extends Fragment {
      * 显示悬浮窗
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
-    private void showFloating() {
+    private synchronized void showFloating() {
         if (!Settings.canDrawOverlays(requireActivity())) {
             return;
         }
+
+        //初始化悬浮窗Fragment
+
         Boolean value = myViewModel.getIsFloating().getValue();
+
+
         FragmentManager sf = requireActivity().getSupportFragmentManager();
         Fragment floating_tasks = sf.findFragmentByTag(GlobalConfiguration.FLOATING_TASKS_FRAGMENT_TAG);
         Fragment floating_timeline = sf.findFragmentByTag(GlobalConfiguration.FLOATING_TIME_LINE_FRAGMENT_TAG);
         if (floating_tasks == null) floating_tasks = new FloatingTasksFragment();
         if (floating_timeline == null) floating_timeline = new FloatingTimeLineFragment();
 
+        //获取窗口管理器
         FragmentTransaction ft = sf.beginTransaction();
+        //如果已经有悬浮窗，则跳过
         if (value) {
             Toast.makeText(requireActivity().getApplicationContext(), "悬浮窗状态:开启", Toast.LENGTH_SHORT).show();
             if (floating_tasks.getView() == null) {
