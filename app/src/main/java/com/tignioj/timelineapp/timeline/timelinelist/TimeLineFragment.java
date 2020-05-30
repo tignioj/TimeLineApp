@@ -315,7 +315,7 @@ public class TimeLineFragment extends Fragment {
                         }
                         Message message = new Message();
                         message.what = UPDATE_TIMELINE_LIST_ON_TIME_CHANGE;
-                        sendMessageDelayed(message, 1000);
+                        sendMessageDelayed(message, 2000);
 //                        Log.d("myTag", "update timeline list" + i++);
                 }
             }
@@ -468,6 +468,6 @@ public class TimeLineFragment extends Fragment {
         isProgramInBackground = false;
         Message message = new Message();
         message.what = UPDATE_TIMELINE_LIST_ON_TIME_CHANGE;
-        handler.sendMessageDelayed(message, 1000);
+        handler.sendMessage(message);
     }
 }

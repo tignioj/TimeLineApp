@@ -1,8 +1,10 @@
 package com.tignioj.timelineapp.timeline.timelinelist;
 
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -113,7 +115,9 @@ public class TimeLineAdapter extends ListAdapter<TimeLineWithTaskCountsPoJo, Tim
 //            /*开启动画*/
 //            objectAnimator.start();
         } else {
-            holder.itemView.setBackground(background);
+            //获取背景
+            TypedValue outValue = new TypedValue();
+            holder.itemView.getContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground, outValue, true);
         }
 
         //高亮未完成任务
