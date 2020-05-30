@@ -84,7 +84,7 @@ public class TaskRemindDatePopupWindow extends PopupWindow {
             @Override
             public void onClick(View v) {
                 chip.setCloseIconVisible(false);
-                chip.setText(getContentView().getResources().getString(R.string.pop_up_window_switch_button_text));
+                chip.setText(getContentView().getResources().getString(R.string.tasks_set_remind_me_date_text));
             }
         });
     }
