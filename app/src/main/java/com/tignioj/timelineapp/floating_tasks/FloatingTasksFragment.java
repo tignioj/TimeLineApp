@@ -32,15 +32,15 @@ import java.util.Set;
 
 public class FloatingTasksFragment extends Fragment {
     private static final int UPDATE_LIST = 0x100;
-    MyViewModel myViewModel;
-    LiveData<List<MyTaskPoJo>> myTaskLiveData;
+    private MyViewModel myViewModel;
+    private LiveData<List<MyTaskPoJo>> myTaskLiveData;
 
     private TextView textView;
     private Set<String> timeLineSummary;
     private RecyclerView rcv;
     //数据适配器
-    FloatingTasksAdapter floatingTasksAdapter;
-    View viewInWindowManager;
+    private FloatingTasksAdapter floatingTasksAdapter;
+    private View viewInWindowManager;
 
     //接收子线程消息，更新界面数据
     Handler handler;
@@ -79,7 +79,7 @@ public class FloatingTasksFragment extends Fragment {
     public void onStop() {
         super.onStop();
     }
-    Observer<List<MyTaskPoJo>> observer = new Observer<List<MyTaskPoJo>>() {
+    private Observer<List<MyTaskPoJo>> observer = new Observer<List<MyTaskPoJo>>() {
         @Override
         public void onChanged(List<MyTaskPoJo> myTaskPoJos) {
             floatingTasksAdapter.submitList(myTaskPoJos);

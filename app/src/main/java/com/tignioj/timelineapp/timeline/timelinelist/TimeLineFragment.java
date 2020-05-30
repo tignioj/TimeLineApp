@@ -166,23 +166,20 @@ public class TimeLineFragment extends Fragment {
             Toast.makeText(requireActivity().getApplicationContext(), "悬浮窗状态:开启", Toast.LENGTH_SHORT).show();
             Log.d("myTag", "根据配置文件,开启悬浮窗");
             if (floating_tasks.getView() == null) {
-
                 ft.add(floating_tasks, GlobalConfiguration.FLOATING_TASKS_FRAGMENT_TAG);
-
-            } else if (!floating_tasks.getView().isAttachedToWindow()) {
+            } else if (!floating_tasks.getView().isAttachedToWindow() && !myViewModel.isHasTasksFloating()) {
                 WindowManager wm = (WindowManager) requireActivity().getSystemService(Context.WINDOW_SERVICE);
                 WindowManager.LayoutParams p = WindowManagerUtils.getFloatingTasksWindowManagerParams();
                 wm.addView(floating_tasks.getView(), p);
             }
+
             if (floating_timeline.getView() == null) {
                 ft.add(floating_timeline, GlobalConfiguration.FLOATING_TIME_LINE_FRAGMENT_TAG);
-            } else if (!floating_timeline.getView().isAttachedToWindow()) {
+            } else if (!floating_timeline.getView().isAttachedToWindow() && !myViewModel.isHasTimeLineFloating()) {
                 WindowManager wm = (WindowManager) requireActivity().getSystemService(Context.WINDOW_SERVICE);
                 WindowManager.LayoutParams p = WindowManagerUtils.getFloatingTimeLinesWindowManagerParams();
                 wm.addView(floating_timeline.getView(), p);
             }
-
-
         } else {
             if (floating_tasks.getView() != null) {
                 ft.remove(floating_tasks);
@@ -219,7 +216,8 @@ public class TimeLineFragment extends Fragment {
 
         myViewModel.getIsFloating().setValue(isShowFloating);
         Log.d("myTag", "onCreateOptionsMenu");
-        myViewModel.getIsFloating().observe(requireActivity(), new Observer<Boolean>() {
+        myViewModel.getIsFloating().removeObservers(getViewLifecycleOwner());
+        myViewModel.getIsFloating().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 Log.d("myTag", "checkFloatingPermission");
