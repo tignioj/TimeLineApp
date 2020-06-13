@@ -5,9 +5,25 @@ import androidx.room.Embedded;
 
 public class TimeLineWithTaskCountsPoJo {
     @Embedded
-    public TimeLine timeLine;
+    private TimeLine timeLine;
 
-//    @Relation(parentColumn = "id", entityColumn = "timeline_id")
+    public TimeLine getTimeLine() {
+        return timeLine;
+    }
+
+    public void setTimeLine(TimeLine timeLine) {
+        this.timeLine = timeLine;
+    }
+
+    public int getTasksCount() {
+        return tasksCount;
+    }
+
+    public void setTasksCount(int tasksCount) {
+        this.tasksCount = tasksCount;
+    }
+
+    //    @Relation(parentColumn = "id", entityColumn = "timeline_id")
 //    public List<MyTask> myTasks;
 
     @ColumnInfo(name = "is_current")
@@ -15,7 +31,7 @@ public class TimeLineWithTaskCountsPoJo {
 
 
     @ColumnInfo(name = "tasks_count")
-    public int tasksCount;
+    private int tasksCount;
 
     public boolean isCurrent() {
         return isCurrent;

@@ -321,7 +321,7 @@ public class TimeLineFragment extends Fragment {
             }
 
             private boolean isCurrentTimeLine(TimeLineWithTaskCountsPoJo t) {
-                return CommonUtils.betweenStartTimeAndEndTime(t.timeLine.getStartTime(), t.timeLine.getEndTime());
+                return CommonUtils.betweenStartTimeAndEndTime(t.getTimeLine().getStartTime(), t.getTimeLine().getEndTime());
             }
         };
 
@@ -370,7 +370,7 @@ public class TimeLineFragment extends Fragment {
                     builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            myViewModel.deleteTimeLines(currentSwipeTimeLine.timeLine);
+                            myViewModel.deleteTimeLines(currentSwipeTimeLine.getTimeLine());
                         }
                     });
 
@@ -393,7 +393,7 @@ public class TimeLineFragment extends Fragment {
                 } else {
                     //编辑页面
                     Bundle bundle = new Bundle();
-                    bundle.putParcelable(getString(R.string.timeline_to_edit), currentSwipeTimeLine.timeLine);
+                    bundle.putParcelable(getString(R.string.timeline_to_edit), currentSwipeTimeLine.getTimeLine());
                     timeLineAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
                     Navigation.findNavController(requireView()).navigate(R.id.action_timeLineFragment_to_addTimeLineFragment, bundle);
                 }

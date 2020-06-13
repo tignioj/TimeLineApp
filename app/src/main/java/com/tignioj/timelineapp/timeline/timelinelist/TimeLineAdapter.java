@@ -1,6 +1,8 @@
 package com.tignioj.timelineapp.timeline.timelinelist;
 
+import android.app.Application;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
@@ -35,19 +38,20 @@ public class TimeLineAdapter extends ListAdapter<TimeLineWithTaskCountsPoJo, Tim
             @Override
 
             public boolean areItemsTheSame(@NonNull TimeLineWithTaskCountsPoJo oldItem, @NonNull TimeLineWithTaskCountsPoJo newItem) {
-                return oldItem.timeLine.getId() == newItem.timeLine.getId();
+                return oldItem.getTimeLine().getId() == newItem.getTimeLine().getId();
             }
 
             @Override
             public boolean areContentsTheSame(@NonNull TimeLineWithTaskCountsPoJo oldItem, @NonNull TimeLineWithTaskCountsPoJo newItem) {
                 return
                         oldItem.isCurrent() == newItem.isCurrent()
-                                && oldItem.tasksCount == newItem.tasksCount
-                                && oldItem.timeLine.getStartTime().equals(newItem.timeLine.getStartTime())
-                                && oldItem.timeLine.getEndTime().equals(newItem.timeLine.getEndTime())
-                                && oldItem.timeLine.getSummary().equals(newItem.timeLine.getSummary())
+                                && oldItem.getTasksCount() == newItem.getTasksCount()
+                                && oldItem.getTimeLine().getStartTime().equals(newItem.getTimeLine().getStartTime())
+                                && oldItem.getTimeLine().getEndTime().equals(newItem.getTimeLine().getEndTime())
+                                && oldItem.getTimeLine().getSummary().equals(newItem.getTimeLine().getSummary())
                         ;
             }
+
         });
         this.myViewModel = myViewModel;
     }
@@ -66,7 +70,7 @@ public class TimeLineAdapter extends ListAdapter<TimeLineWithTaskCountsPoJo, Tim
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 TimeLineWithTaskCountsPoJo item = getItem(holder.getAdapterPosition());
-                bundle.putLong("timeLineId", item.timeLine.getId());
+                bundle.putLong("timeLineId", item.getTimeLine().getId());
                 Navigation.findNavController(v).navigate(R.id.action_timeLineFragment_to_tasksFragment, bundle);
             }
         });
@@ -78,52 +82,49 @@ public class TimeLineAdapter extends ListAdapter<TimeLineWithTaskCountsPoJo, Tim
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         final TimeLineWithTaskCountsPoJo tl = getItem(position);
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.CHINA);
-        String summary = tl.timeLine.getSummary();
+        String summary = tl.getTimeLine().getSummary();
         holder.textViewSummary.setText(summary);
-        holder.textViewStartTime.setText(sdf.format(tl.timeLine.getStartTime()));
-        holder.textViewEndTime.setText(sdf.format(tl.timeLine.getEndTime()));
+        holder.textViewStartTime.setText(sdf.format(tl.getTimeLine().getStartTime()));
+        holder.textViewEndTime.setText(sdf.format(tl.getTimeLine().getEndTime()));
 //        holder.chip.setText(String.valueOf(tl.tasksCount));
-        holder.textViewTasksCount.setText(String.valueOf(tl.tasksCount));
+        holder.textViewTasksCount.setText(String.valueOf(tl.getTasksCount()));
 
 
-        Drawable background = holder.itemView.getBackground();
         //高亮当前时间段
 //        if (betweenStartTimeAndEndTime(tl.timeLine.getStartTime(), tl.timeLine.getEndTime())) {
         if (tl.isCurrent()) {
 //            holder.itemView.setBackgroundColor(Color.rgb(0xC5, 0x89, 0x33));
 //            C58933
             holder.itemView.setBackgroundColor(Color.rgb(0x79, 0x86, 0xCB));
-//            7986CB
-//            ColorDrawable background = (ColorDrawable) holder.itemView.getRootView().getBackground();
-//            background.getBounds();
 
-//            final ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(
-//                    holder.itemView.getRootView(),
-//                    "x",
-//                    0, 0
-//            );
-//            objectAnimator.setDuration(10000);
-//
-//            objectAnimator.setFloatValues(
-//                    /*关键帧1*/
-//                    holder.itemView.getX()-400,
-//
-//                    /*关键帧2*/
-//                    holder.itemView.getX() + 400
-//                    /*可以继续写关键帧*/
-//            );
-//            /*开启动画*/
-//            objectAnimator.start();
         } else {
             //获取背景
+            //https://stackoverflow.com/questions/37987732/programmatically-set-selectableitembackground-on-android-view
             TypedValue outValue = new TypedValue();
             holder.itemView.getContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground, outValue, true);
+            holder.itemView.setBackgroundResource(outValue.resourceId);
         }
 
         //高亮未完成任务
-        if (tl.tasksCount > 0) {
+        if (tl.getTasksCount() > 0) {
 //            holder.chip.setTextAppearance(R.style.fontForNotificationLandingPage);
             holder.textViewTasksCount.setTextColor(Color.RED);
+        } else {
+            TypedValue outValue = new TypedValue();
+            holder.itemView.getContext().getTheme().resolveAttribute(android.R.attr.textColor, outValue, true);
+
+            TypedValue typedValue = new TypedValue();
+            Application application = myViewModel.getApplication();
+            Resources.Theme theme = application.getTheme();
+            theme.resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
+            TypedArray arr =
+                    application.obtainStyledAttributes(typedValue.data, new int[]{
+                            android.R.attr.textColorPrimary});
+            int primaryColor = arr.getColor(0, -1);
+            holder.textViewTasksCount.setTextColor(primaryColor);
+            //回收资源
+            arr.recycle();
+
         }
     }
 
