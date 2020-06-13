@@ -3,6 +3,7 @@ package com.tignioj.timelineapp.entity;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -17,10 +18,23 @@ public class TimeLine implements Parcelable {
     private Date endTime;
     private String summary;
 
+    @ColumnInfo(name = "enable_vibrate")
+    private boolean enableVibrate;
+
+
+    public boolean isEnableVibrate() {
+        return enableVibrate;
+    }
+
+    public void setEnableVibrate(boolean enableVibrate) {
+        this.enableVibrate = enableVibrate;
+    }
+
     protected TimeLine(Parcel in) {
         id = in.readLong();
         summary = in.readString();
     }
+
 
     public static final Creator<TimeLine> CREATOR = new Creator<TimeLine>() {
         @Override
@@ -41,6 +55,7 @@ public class TimeLine implements Parcelable {
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
                 ", summary='" + summary + '\'' +
+                ", enableVibrate=" + enableVibrate +
                 '}';
     }
 

@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -39,9 +40,14 @@ public class MainActivity extends AppCompatActivity {
 
         //开启更新任务的服务
         Intent service = new Intent(getApplicationContext(), UpdateTasksService.class);
+
+
         startService(service);
+
         myConnection = new MyConnection();
         bindService(service, myConnection, BIND_AUTO_CREATE);
+
+
     }
 
     @Override

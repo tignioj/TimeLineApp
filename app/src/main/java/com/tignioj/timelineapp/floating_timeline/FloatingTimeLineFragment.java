@@ -28,6 +28,7 @@ import com.tignioj.timelineapp.R;
 import com.tignioj.timelineapp.config.GlobalConfiguration;
 import com.tignioj.timelineapp.entity.TimeLinePoJo;
 import com.tignioj.timelineapp.floating_tasks.FloatingTasksFragment;
+import com.tignioj.timelineapp.service.UpdateTasksService;
 import com.tignioj.timelineapp.utils.CommonUtils;
 import com.tignioj.timelineapp.utils.WindowManagerUtils;
 
@@ -118,6 +119,12 @@ public class FloatingTimeLineFragment extends Fragment {
                                 if (isCurrentTimeLine(t)) {
                                     if (!t.isCurrent()) {
                                         t.setCurrent(true);
+                                        //发出通知
+//                                        long[] pattern = new long[]{100, 100, 100, 100, 100, 100, 100, 100,100,100};
+                                        if (t.getTimeLine().isEnableVibrate()) {
+                                            long[] pattern = new long[]{1000, 1000, 1000, 1000};
+                                            UpdateTasksService.myVibrate(requireContext() ,pattern);
+                                        }
                                         adapter.notifyItemChanged(j);
                                         floatingTasksFragment.refreshTasks();
                                     }

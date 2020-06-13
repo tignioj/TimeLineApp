@@ -1,5 +1,8 @@
 package com.tignioj.timelineapp.service;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -9,11 +12,14 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.navigation.NavController;
@@ -34,6 +40,8 @@ import java.util.List;
 import java.util.Locale;
 
 public class UpdateTasksService extends Service {
+
+    private static final String CHANNEL_ID = "channel_id1";
 
     /**
      * 作为Activity和Service的中介
@@ -146,11 +154,31 @@ public class UpdateTasksService extends Service {
             edit.apply();
         }
     }
+    /**
+     * 震动
+     * @param context
+     * @param pattern
+     */
+    public static void myVibrate(Context context, long[] pattern) {
+        Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        if (vibrator == null) {
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // -1 : Play exactly once
+            VibrationEffect effect = VibrationEffect.createWaveform(pattern, -1);
+//                vibrator.vibrate(VibrationEffect.createOneShot(pattern[0], VibrationEffect.DEFAULT_AMPLITUDE));
+            vibrator.vibrate(effect);
+        } else {
+            vibrator.vibrate(pattern, -1);
+        }
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
         myTasksRepository = new MyTasksRepository(getApplicationContext());
+
 
         todayAllMyTasksLive = myTasksRepository.getTodayAllMyRepeatTasksLive();
 
@@ -162,6 +190,7 @@ public class UpdateTasksService extends Service {
         });
 
         initDayStoreInShp(getApplicationContext());
+
 
         new Thread(new Runnable() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -210,9 +239,7 @@ public class UpdateTasksService extends Service {
                     e.printStackTrace();
                 }
             }
-        }).
-
-                start();
+        }).start();
     }
 
     private void updateTimeLine() {

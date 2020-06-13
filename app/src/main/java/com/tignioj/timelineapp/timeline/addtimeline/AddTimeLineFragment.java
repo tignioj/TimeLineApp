@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -44,6 +45,7 @@ public class AddTimeLineFragment extends Fragment {
     //是否为编辑页面
     private boolean isEdit;
     private TimeLine timeLine;
+    CheckBox checkBoxEnableVibrate;
 
     public AddTimeLineFragment() {
         // Required empty public constructor
@@ -58,7 +60,14 @@ public class AddTimeLineFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_time_line, container, false);
+        View inflate = inflater.inflate(R.layout.fragment_add_time_line, container, false);
+
+        editTextEndTime = inflate.findViewById(R.id.et_end_time);
+        editTextStartTime = inflate.findViewById(R.id.et_start_time);
+        editTextSummary = inflate.findViewById(R.id.et_summary);
+
+        checkBoxEnableVibrate = inflate.findViewById(R.id.addTimeline_checkBoxEnableVibrate);
+        return inflate;
     }
 
     @Override
@@ -66,11 +75,10 @@ public class AddTimeLineFragment extends Fragment {
         myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
         timeLine = new TimeLine();
 
+
+
         super.onActivityCreated(savedInstanceState);
         ((Button) requireActivity().findViewById(R.id.button_save)).setEnabled(false);
-        editTextEndTime = requireActivity().findViewById(R.id.et_end_time);
-        editTextStartTime = requireActivity().findViewById(R.id.et_start_time);
-        editTextSummary = requireActivity().findViewById(R.id.et_summary);
 
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         //检测是否有TimeLine对象传过来, 如果有说明是编辑页面
@@ -84,6 +92,7 @@ public class AddTimeLineFragment extends Fragment {
                 editTextEndTime.setText(sdf.format(timeLine.getEndTime()));
                 editTextSummary.setText(timeLine.getSummary());
                 ((Button) requireActivity().findViewById(R.id.button_save)).setEnabled(true);
+                checkBoxEnableVibrate.setChecked(this.timeLine.isEnableVibrate());
             }
         }
 
@@ -98,7 +107,10 @@ public class AddTimeLineFragment extends Fragment {
             public void onClick(View v) {
                 String summary = ((EditText) requireActivity().findViewById(R.id.et_summary)).getText().toString().trim();
                 timeLine.setSummary(summary);
+                timeLine.setEnableVibrate(checkBoxEnableVibrate.isChecked());
+
                 if (isEdit) {
+
                     myViewModel.updateTimeLines(timeLine);
                     Navigation.findNavController(v).navigateUp();
                     Toast.makeText(requireContext(), "保存成功", Toast.LENGTH_SHORT).show();
