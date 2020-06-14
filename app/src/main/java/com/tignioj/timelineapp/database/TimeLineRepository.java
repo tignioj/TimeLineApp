@@ -2,8 +2,12 @@ package com.tignioj.timelineapp.database;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.tignioj.timelineapp.entity.TimeLine;
 import com.tignioj.timelineapp.entity.TimeLinePoJo;
@@ -16,16 +20,36 @@ public class TimeLineRepository {
     private LiveData<List<TimeLine>> allTimeLineLive;
     private TimeLineDao timeLineDao;
     //主页用的TimeLine
-    private LiveData<List<TimeLineWithTaskCountsPoJo>> allTimeLineWithTodayTaskHasNoFinishedCountLive;
+    private MutableLiveData<List<TimeLineWithTaskCountsPoJo>> allTimeLineWithTodayTaskHasNoFinishedCountLive;
     //悬浮窗用的TimeLine
-    private LiveData<List<TimeLinePoJo>> allFloatingTimeLineWithTodayTaskHasNoFinishedCountLive;
+//    private LiveData<List<TimeLinePoJo>> allFloatingTimeLineWithTodayTaskHasNoFinishedCountLive;
+
+    //
+    private MutableLiveData<List<TimeLinePoJo>> allFloatingTimeLineWithTodayTaskHasNoFinishedCountMutableLive;
+
+    private final Observer myObserver = new Observer<List<TimeLineWithTaskCountsPoJo>>() {
+        @Override
+        public void onChanged(List<TimeLineWithTaskCountsPoJo> timeLineWithTaskCountsPoJos) {
+            Log.d("TimeLineRepository", "update allTimeLineWithTodayTaskHasNoFinishedCountLive");
+            allTimeLineWithTodayTaskHasNoFinishedCountLive.setValue(timeLineWithTaskCountsPoJos);
+        }
+    };
+
+    public MutableLiveData<List<TimeLinePoJo>> getAllFloatingTimeLineWithTodayTaskHasNoFinishedCountMutableLive() {
+        return allFloatingTimeLineWithTodayTaskHasNoFinishedCountMutableLive;
+    }
+
 
 
     private static TimeLineRepository INSTANCE;
 
-    public static TimeLineRepository getInstance(Context context){
+    public static TimeLineRepository getInstance(Context context) {
         if (INSTANCE == null) {
-            INSTANCE = new TimeLineRepository(context);
+            synchronized (TimeLineRepository.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new TimeLineRepository(context);
+                }
+            }
         }
         return INSTANCE;
     }
@@ -35,27 +59,44 @@ public class TimeLineRepository {
         TimeLineDataBase timeLineDataBase = TimeLineDataBase.getDataBase(context);
         this.timeLineDao = timeLineDataBase.getTimeLineDao();
         this.allTimeLineLive = timeLineDao.getAllTimeLinesLive();
-        this.allTimeLineWithTodayTaskHasNoFinishedCountLive = timeLineDao.getAllTimeLinesWithTodayTasksHasNoFinishedCountLive();
-        this.allFloatingTimeLineWithTodayTaskHasNoFinishedCountLive = timeLineDao.getAllFloatingTimeLinesWithTodayTasksHasNoFinishedCountLive();
+        this.allFloatingTimeLineWithTodayTaskHasNoFinishedCountMutableLive = new MutableLiveData<>();
+        updateMemoryFloatingTimeLines();
+
+        allTimeLineWithTodayTaskHasNoFinishedCountLive = new MutableLiveData<>();
+        updateMemoryTimeLines();
     }
 
+    private void updateMemoryFloatingTimeLines() {
+        LiveData<List<TimeLinePoJo>> allFloatingTimeLinesWithTodayTasksHasNoFinishedCountLive = timeLineDao.getAllFloatingTimeLinesWithTodayTasksHasNoFinishedCountLive();
 
-    public LiveData<List<TimeLinePoJo>> getAllFloatingTimeLineWithTodayTaskHasNoFinishedCountLive() {
-        return allFloatingTimeLineWithTodayTaskHasNoFinishedCountLive;
+        allFloatingTimeLinesWithTodayTasksHasNoFinishedCountLive.observeForever(new Observer<List<TimeLinePoJo>>() {
+            @Override
+            public void onChanged(List<TimeLinePoJo> timeLinePoJos) {
+                allFloatingTimeLineWithTodayTaskHasNoFinishedCountMutableLive.setValue(timeLinePoJos);
+            }
+        });
+    }
+
+    private void updateMemoryTimeLines() {
+        LiveData<List<TimeLineWithTaskCountsPoJo>> allTimeLinesWithTodayTasksHasNoFinishedCountLive = timeLineDao.getAllTimeLinesWithTodayTasksHasNoFinishedCountLive();
+        //移除旧的
+        allTimeLineWithTodayTaskHasNoFinishedCountLive.removeObserver(myObserver);
+        //添加到新的
+        allTimeLinesWithTodayTasksHasNoFinishedCountLive.observeForever(myObserver);
     }
 
     /**
      * 当一天改变时，调用这个刷新悬浮窗的数据
      */
     public void refreshFloatingTimeLines() {
-        this.allFloatingTimeLineWithTodayTaskHasNoFinishedCountLive = timeLineDao.getAllFloatingTimeLinesWithTodayTasksHasNoFinishedCountLive();
+        updateMemoryFloatingTimeLines();
     }
 
     /**
      * 当一天改变时，调用这个刷新非悬浮窗数据的TimeLine
      */
     public void refreshTimeLines() {
-        this.allTimeLineWithTodayTaskHasNoFinishedCountLive = timeLineDao.getAllTimeLinesWithTodayTasksHasNoFinishedCountLive();
+        updateMemoryTimeLines();
     }
 
     static class InsertAsyncTask extends AsyncTask<TimeLine, Void, Void> {
@@ -138,7 +179,7 @@ public class TimeLineRepository {
         return timeLineDao.getAllTimeLines();
     }
 
-    public LiveData<List<TimeLineWithTaskCountsPoJo>> getAllTimeLineWithTodayTaskHasNoFinishedCountLive() {
+    public MutableLiveData<List<TimeLineWithTaskCountsPoJo>> getAllTimeLineWithTodayTaskHasNoFinishedCountLive() {
         return allTimeLineWithTodayTaskHasNoFinishedCountLive;
     }
 }

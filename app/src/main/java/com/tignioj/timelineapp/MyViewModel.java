@@ -20,8 +20,6 @@ import java.util.Date;
 import java.util.List;
 
 public class MyViewModel extends AndroidViewModel {
-    private LiveData<List<TimeLine>> timeLineListLiveData;
-    private LiveData<List<TimeLineWithTaskCountsPoJo>> timeLineWithTodayHasNoFinishedTasksCount;
 
     private TimeLineRepository timeLineRepository;
     private MyTasksRepository myTasksRepository;
@@ -58,8 +56,6 @@ public class MyViewModel extends AndroidViewModel {
         timeLineUIRepository = TimeLineUIRepository.getInstance(application);
         myTasksRepository = MyTasksRepository.getInstance(application);
         timeLineRepository = TimeLineRepository.getInstance(application);
-        this.timeLineListLiveData = timeLineRepository.getAllTimeLinesLive();
-        this.timeLineWithTodayHasNoFinishedTasksCount = timeLineRepository.getAllTimeLineWithTodayTaskHasNoFinishedCountLive();
     }
 
     public LiveData<List<MyTask>> getMyTaskLiveData(long timeLineId) {
@@ -68,11 +64,12 @@ public class MyViewModel extends AndroidViewModel {
 
 
     public LiveData<List<TimeLine>> getTimeLineListLiveData() {
-        return timeLineListLiveData;
+        return timeLineRepository.getAllTimeLinesLive();
+
     }
 
     public LiveData<List<TimeLineWithTaskCountsPoJo>> getTimeLineWithTodayHasNoFinishedTasksCount() {
-        return timeLineWithTodayHasNoFinishedTasksCount;
+        return timeLineRepository.getAllTimeLineWithTodayTaskHasNoFinishedCountLive();
     }
 
 
@@ -130,7 +127,7 @@ public class MyViewModel extends AndroidViewModel {
      *
      * @return
      */
-    public LiveData<List<MyTaskPoJo>> getTodayMyTaskLiveDataByCurrentTimeLine() {
+    public MutableLiveData<List<MyTaskPoJo>> getTodayMyTaskLiveDataByCurrentTimeLine() {
         return myTasksRepository.getTodayAllMyTasksLiveByCurrentTimeLine();
     }
 
@@ -138,8 +135,8 @@ public class MyViewModel extends AndroidViewModel {
      * 获取当前TimeLine
      * @return
      */
-    public LiveData<List<TimeLinePoJo>> getFloatingTimeLinePoJoListLiveData() {
-        return timeLineRepository.getAllFloatingTimeLineWithTodayTaskHasNoFinishedCountLive();
+    public MutableLiveData<List<TimeLinePoJo>> getFloatingTimeLinePoJoListLiveData() {
+        return timeLineRepository.getAllFloatingTimeLineWithTodayTaskHasNoFinishedCountMutableLive();
     }
 
     public void refreshFloatingTasks() {

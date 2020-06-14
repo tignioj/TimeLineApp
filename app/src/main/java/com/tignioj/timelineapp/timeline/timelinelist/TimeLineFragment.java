@@ -270,8 +270,11 @@ public class TimeLineFragment extends Fragment {
         observer = new Observer<List<TimeLineWithTaskCountsPoJo>>() {
             @Override
             public void onChanged(List<TimeLineWithTaskCountsPoJo> timeLineWithTaskCountsPoJos) {
+
+                Log.d("TimeLineFragment:", "update pjojs");
                 allTimeLines = timeLineWithTaskCountsPoJos;
                 timeLineAdapter.submitList(timeLineWithTaskCountsPoJos);
+                timeLineAdapter.notifyDataSetChanged();
             }
         };
 
@@ -279,51 +282,51 @@ public class TimeLineFragment extends Fragment {
 
         timeLineWithTodayHasNoFinishedTasksCount = myViewModel.getTimeLineWithTodayHasNoFinishedTasksCount();
         timeLineWithTodayHasNoFinishedTasksCount.observe(requireActivity(), observer);
-
-        //更新界面的数据
-        handler = new Handler(Looper.getMainLooper()) {
-            int i = 0;
-
-            @Override
-            public void handleMessage(@NonNull Message msg) {
-                if (isProgramInBackground) {
-                    return;
-                }
-                switch (msg.what) {
-                    case UPDATE_TIMELINE_LIST_ON_DAY_CHANGE:
-                        myViewModel.refreshTimeLines();
-                        timeLineWithTodayHasNoFinishedTasksCount = myViewModel.getTimeLineWithTodayHasNoFinishedTasksCount();
-                        timeLineWithTodayHasNoFinishedTasksCount.observe(requireActivity(), observer);
-                        break;
-                    case UPDATE_TIMELINE_LIST_ON_TIME_CHANGE:
-                        List<TimeLineWithTaskCountsPoJo> value = timeLineWithTodayHasNoFinishedTasksCount.getValue();
-                        if (value != null) {
-                            for (int j = 0; j < value.size(); j++) {
-                                TimeLineWithTaskCountsPoJo t = value.get(j);
-                                if (isCurrentTimeLine(t)) {
-                                    if (!t.isCurrent()) {
-                                        t.setCurrent(true);
-                                        timeLineAdapter.notifyItemChanged(j);
-                                    }
-                                } else {
-                                    if (t.isCurrent()) {
-                                        t.setCurrent(false);
-                                        timeLineAdapter.notifyItemChanged(j);
-                                    }
-                                }
-                            }
-                        }
-                        Message message = new Message();
-                        message.what = UPDATE_TIMELINE_LIST_ON_TIME_CHANGE;
-                        sendMessageDelayed(message, 2000);
-//                        Log.d("myTag", "update timeline list" + i++);
-                }
-            }
-
-            private boolean isCurrentTimeLine(TimeLineWithTaskCountsPoJo t) {
-                return CommonUtils.betweenStartTimeAndEndTime(t.getTimeLine().getStartTime(), t.getTimeLine().getEndTime());
-            }
-        };
+//
+//        //更新界面的数据
+//        handler = new Handler(Looper.getMainLooper()) {
+//            int i = 0;
+//
+//            @Override
+//            public void handleMessage(@NonNull Message msg) {
+//                if (isProgramInBackground) {
+//                    return;
+//                }
+//                switch (msg.what) {
+//                    case UPDATE_TIMELINE_LIST_ON_DAY_CHANGE:
+//                        myViewModel.refreshTimeLines();
+//                        timeLineWithTodayHasNoFinishedTasksCount = myViewModel.getTimeLineWithTodayHasNoFinishedTasksCount();
+//                        timeLineWithTodayHasNoFinishedTasksCount.observe(requireActivity(), observer);
+//                        break;
+//                    case UPDATE_TIMELINE_LIST_ON_TIME_CHANGE:
+//                        List<TimeLineWithTaskCountsPoJo> value = timeLineWithTodayHasNoFinishedTasksCount.getValue();
+//                        if (value != null) {
+//                            for (int j = 0; j < value.size(); j++) {
+//                                TimeLineWithTaskCountsPoJo t = value.get(j);
+//                                if (isCurrentTimeLine(t)) {
+//                                    if (!t.isCurrent()) {
+//                                        t.setCurrent(true);
+//                                        timeLineAdapter.notifyItemChanged(j);
+//                                    }
+//                                } else {
+//                                    if (t.isCurrent()) {
+//                                        t.setCurrent(false);
+//                                        timeLineAdapter.notifyItemChanged(j);
+//                                    }
+//                                }
+//                            }
+//                        }
+//                        Message message = new Message();
+//                        message.what = UPDATE_TIMELINE_LIST_ON_TIME_CHANGE;
+//                        sendMessageDelayed(message, 2000);
+////                        Log.d("myTag", "update timeline list" + i++);
+//                }
+//            }
+//
+//            private boolean isCurrentTimeLine(TimeLineWithTaskCountsPoJo t) {
+//                return CommonUtils.betweenStartTimeAndEndTime(t.getTimeLine().getStartTime(), t.getTimeLine().getEndTime());
+//            }
+//        };
 
 
         //初始化滑动边界组件
@@ -466,8 +469,8 @@ public class TimeLineFragment extends Fragment {
     public void onStart() {
         super.onStart();
         isProgramInBackground = false;
-        Message message = new Message();
-        message.what = UPDATE_TIMELINE_LIST_ON_TIME_CHANGE;
-        handler.sendMessage(message);
+//        Message message = new Message();
+//        message.what = UPDATE_TIMELINE_LIST_ON_TIME_CHANGE;
+//        handler.sendMessage(message);
     }
 }

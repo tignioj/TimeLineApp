@@ -117,6 +117,20 @@ GROUP by tl.id
 //    LiveData<List<TimeLinePoJo>> getAllFloatingTimeLinesWithTodayTasksHasNoFinishedCountLive();
     @Transaction
     @Query("select " +
+
+
+            " CAST( " +
+            "  sum( " +
+            "   CASE WHEN  " +
+            "    ( " +
+            "     time('now',  'localtime') >= time((startTime/1000),  'unixepoch',  'localtime') AND " +
+            "     time('now',  'localtime') <= time((endTime/1000),  'unixepoch',  'localtime') " +
+            "    ) " +
+            "   THEN 1 ELSE 0 end " +
+            "   )as bit " +
+            "  ) as is_current ," +
+
+
             "count(m.id) tasks_count , tl.* from timeline tl left outer join " +
             " (" +
             " SELECT * from MyTask WHERE has_finished = 0" +

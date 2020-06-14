@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class CommonUtils {
 
@@ -47,6 +48,34 @@ public class CommonUtils {
     }
 
 
+    public static String format(Date startTime) {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.CHINA);
+        return sdf.format(startTime);
+    }
+
+    public static Date parse(String pattern) {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.CHINA);
+        try {
+            return  sdf.parse(pattern);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static boolean aAfterBWithinDay(Date a, Date b) {
+        Calendar cA = Calendar.getInstance();
+        Calendar cB = Calendar.getInstance();
+
+        cA.setTime(a);
+        cB.setTime(b);
+
+        //设置成相同第日期，这时候只有时间不同了
+        cA.set(1970,1,1);
+        cB.set(1970,1,1);
+
+        return cA.after(cB);
+    }
 
 
 }

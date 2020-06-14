@@ -6,6 +6,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.sqlite.db.SimpleSQLiteQuery;
 
 import com.tignioj.timelineapp.entity.MyTask;
@@ -17,19 +19,43 @@ import java.util.List;
 public class MyTasksRepository {
     private LiveData<List<MyTask>> allMyTaskLive;
     private TasksDao tasksDao;
-    LiveData<List<MyTaskPoJo>> todayAllTasksLiveByCurrentTimeLine;
+    MutableLiveData<List<MyTaskPoJo>> todayAllTasksLiveByCurrentTimeLineMutableLive;
 
-    public MyTasksRepository(Context context) {
+    private MyTasksRepository(Context context) {
         TimeLineDataBase timeLineDataBase = TimeLineDataBase.getDataBase(context);
         this.tasksDao = timeLineDataBase.getTasksDao();
         this.allMyTaskLive = tasksDao.getAllTasksLive();
-        todayAllTasksLiveByCurrentTimeLine = tasksDao.getTodayAllTasksLiveByCurrentTimeLine();
+        todayAllTasksLiveByCurrentTimeLineMutableLive = new MutableLiveData<>();
+        updateTodayTasks();
     }
 
+    private void updateTodayTasks() {
+        LiveData<List<MyTaskPoJo>> todayAllTasksLiveByCurrentTimeLine = tasksDao.getTodayAllTasksLiveByCurrentTimeLine();
+        //移除旧的
+        todayAllTasksLiveByCurrentTimeLineMutableLive.removeObserver(myObserver);
+        //添加到新的
+        todayAllTasksLiveByCurrentTimeLine.observeForever(myObserver);
+    }
+
+    private final Observer myObserver = new Observer<List<MyTaskPoJo>>() {
+        @Override
+        public void onChanged(List<MyTaskPoJo> myTaskPoJos) {
+            Log.d("myTasksRepo", "refresh" + myTaskPoJos.size());
+            todayAllTasksLiveByCurrentTimeLineMutableLive.setValue(myTaskPoJos);
+        }
+    };
+
+
     private static MyTasksRepository INSTANCE;
-    public static MyTasksRepository getInstance(Application application) {
+
+    public static MyTasksRepository getInstance(Context context) {
+
         if (INSTANCE == null) {
-            INSTANCE = new MyTasksRepository(application);
+            synchronized (MyTasksRepository.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new MyTasksRepository(context);
+                }
+            }
         }
         return INSTANCE;
     }
@@ -76,19 +102,19 @@ public class MyTasksRepository {
     }
 
     /**
-     * 获取当前时间的TimeLine
+     * 获取当前时间的任务
      *
      * @return
      */
-    public LiveData<List<MyTaskPoJo>> getTodayAllMyTasksLiveByCurrentTimeLine() {
-        return todayAllTasksLiveByCurrentTimeLine;
+    public MutableLiveData<List<MyTaskPoJo>> getTodayAllMyTasksLiveByCurrentTimeLine() {
+        return todayAllTasksLiveByCurrentTimeLineMutableLive;
     }
 
     /**
      * 刷新当前浮动任务数据
      */
     public void refreshFloatingTasks() {
-        this.todayAllTasksLiveByCurrentTimeLine = tasksDao.getTodayAllTasksLiveByCurrentTimeLine();
+        updateTodayTasks();
     }
 
 //    /**
@@ -167,7 +193,6 @@ public class MyTasksRepository {
     public LiveData<List<MyTask>> getAllMyTasksLiveByTimeLine(long timeLineId) {
         return tasksDao.getAllTasksLiveByTimeLine(timeLineId);
     }
-
 
     public void insertMyTasks(MyTask... tasks) {
         new InsertAsyncTask(tasksDao).execute(tasks);

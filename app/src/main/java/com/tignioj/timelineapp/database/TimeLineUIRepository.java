@@ -5,11 +5,15 @@ import android.content.Context;
 import androidx.lifecycle.MutableLiveData;
 
 public class TimeLineUIRepository {
-    private static  TimeLineUIRepository  INSTANCE;
+    private static TimeLineUIRepository  INSTANCE;
 
     public static TimeLineUIRepository getInstance(Context context) {
         if (INSTANCE == null) {
-            INSTANCE = new TimeLineUIRepository(context);
+            synchronized (TimeLineRepository.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new TimeLineUIRepository(context);
+                }
+            }
         }
         return INSTANCE;
     }
@@ -31,7 +35,6 @@ public class TimeLineUIRepository {
         this.isHasTasksFloating = new MutableLiveData<>();
         this.isHasTasksFloating.setValue(false);
     }
-
 
 
     public MutableLiveData<Boolean> getIsFloating() {

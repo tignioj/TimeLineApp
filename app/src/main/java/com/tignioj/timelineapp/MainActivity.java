@@ -15,17 +15,14 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
-import com.tignioj.timelineapp.service.UpdateTasksService;
+import com.tignioj.timelineapp.service.UpdateService;
 
 public class MainActivity extends AppCompatActivity {
 
     NavController controller;
 
-    UpdateTasksService.FloatingWindowIBinder myIBinder;
 
     private static final int UPDATE_LIST = 0x100;
-
-    MyConnection myConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +36,16 @@ public class MainActivity extends AppCompatActivity {
 
 
         //开启更新任务的服务
-        Intent service = new Intent(getApplicationContext(), UpdateTasksService.class);
+//        Intent service = new Intent(getApplicationContext(), UpdateTasksService.class);
+//        startService(service);
 
+        //震动提醒服务
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(new Intent(this, UpdateService.class));
+        } else {
+            startService(new Intent(this, UpdateService.class));
+        }
 
-        startService(service);
-
-        myConnection = new MyConnection();
-        bindService(service, myConnection, BIND_AUTO_CREATE);
 
 
     }
@@ -53,24 +53,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbindService(myConnection);
     }
 
-    private class MyConnection implements ServiceConnection {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            //只有当Service的onBind方法返回值不为null的时候，才会调用onServiceConnected
-            Log.d("myTag", "onServiceConnected");
-            myIBinder = (UpdateTasksService.FloatingWindowIBinder) service;
-            myIBinder.setContext(MainActivity.this);
-            myIBinder.startFloating();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.d("myTag", "onServiceDisconnected");
-        }
-    }
 
 
     @Override

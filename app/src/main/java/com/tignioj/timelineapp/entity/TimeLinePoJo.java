@@ -14,7 +14,8 @@ public class TimeLinePoJo {
     private TimeLine timeLine;
 
 //    @ColumnInfo(name = "is_current")
-    @Ignore
+//    @Ignore
+    @ColumnInfo(name = "is_current")
     private boolean isCurrent;
 
     public boolean isCurrent() {

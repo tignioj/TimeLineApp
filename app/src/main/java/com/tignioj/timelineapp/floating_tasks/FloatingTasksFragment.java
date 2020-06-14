@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -33,7 +35,7 @@ import java.util.Set;
 public class FloatingTasksFragment extends Fragment {
     private static final int UPDATE_LIST = 0x100;
     private MyViewModel myViewModel;
-    private LiveData<List<MyTaskPoJo>> myTaskLiveData;
+    private MutableLiveData<List<MyTaskPoJo>> myTaskLiveData;
 
     private TextView textView;
     private Set<String> timeLineSummary;
@@ -41,9 +43,6 @@ public class FloatingTasksFragment extends Fragment {
     //数据适配器
     private FloatingTasksAdapter floatingTasksAdapter;
     private View viewInWindowManager;
-
-    //接收子线程消息，更新界面数据
-    Handler handler;
 
     public FloatingTasksAdapter getFloatingTasksAdapter() {
         return floatingTasksAdapter;
@@ -79,10 +78,15 @@ public class FloatingTasksFragment extends Fragment {
     public void onStop() {
         super.onStop();
     }
-    private Observer<List<MyTaskPoJo>> observer = new Observer<List<MyTaskPoJo>>() {
+
+
+
+     Observer<List<MyTaskPoJo>> observer = new Observer<List<MyTaskPoJo>>() {
         @Override
         public void onChanged(List<MyTaskPoJo> myTaskPoJos) {
             floatingTasksAdapter.submitList(myTaskPoJos);
+            floatingTasksAdapter.notifyDataSetChanged();
+
             if (myTaskPoJos.size() == 0) {
                 if (viewInWindowManager != null) {
                     viewInWindowManager.setVisibility(View.INVISIBLE);
@@ -92,6 +96,7 @@ public class FloatingTasksFragment extends Fragment {
                     viewInWindowManager.setVisibility(View.VISIBLE);
                 }
             }
+            Log.d("floatingTasks", "update floating tasks");
         }
     };
 
@@ -154,13 +159,22 @@ public class FloatingTasksFragment extends Fragment {
         }
     }
 
-
-    /**
-     * 更新悬浮窗的数据
-     */
-    public void refreshTasks() {
-        myViewModel.refreshFloatingTasks();
-        myTaskLiveData = myViewModel.getTodayMyTaskLiveDataByCurrentTimeLine();
-        myTaskLiveData.observeForever(observer);
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    //    /**
+//     * 更新悬浮窗的数据
+//     */
+//    public void refreshTasks() {
+//        myViewModel.refreshFloatingTasks();
+//        myTaskLiveData = myViewModel.getTodayMyTaskLiveDataByCurrentTimeLine();
+//        myTaskLiveData.observeForever(observer);
+//    }
 }

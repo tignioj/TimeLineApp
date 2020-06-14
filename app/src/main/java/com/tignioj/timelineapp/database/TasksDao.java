@@ -67,6 +67,18 @@ public interface TasksDao {
             " AND date(datetime(remind_me_date / 1000 , 'unixepoch', 'localtime')) = date('now', 'localtime')")
     LiveData<List<MyTaskPoJo>> getTodayAllTasksLiveByCurrentTimeLine();
 
+    /**
+     * 获取当前TimeLine还没完成的任务
+     *
+     * @return
+     */
+    @Query("select timeline.summary, MyTask.* FROM timeline" +
+            " INNER JOIN MyTask ON timeline.id = MyTask.timeline_id " +
+            " WHERE time('now', 'localtime') BETWEEN  time((datetime(startTime/1000,'unixepoch', 'localtime')))" +
+            " AND time((datetime(endTime/1000,'unixepoch', 'localtime'))) " +
+            " AND MyTask.has_finished = 0" +
+            " AND date(datetime(remind_me_date / 1000 , 'unixepoch', 'localtime')) = date('now', 'localtime')")
+    List<MyTaskPoJo> getTodayAllTasksByCurrentTimeLine();
 
     /**
      * 获取今天的设置了repeat的数据
