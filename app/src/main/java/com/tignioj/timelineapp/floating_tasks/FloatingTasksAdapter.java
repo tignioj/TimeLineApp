@@ -52,6 +52,17 @@ public class FloatingTasksAdapter extends ListAdapter<MyTaskPoJo, FloatingTasksA
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         itemView = layoutInflater.inflate(R.layout.cell_floating_tasks, parent, false);
         final MyViewHolder holder = new MyViewHolder(itemView);
+
+
+        return holder;
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
+        holder.getCheckBox().setChecked(getItem(holder.getAdapterPosition()).getMyTask().isHasFinish());
+        holder.getTextViewContent().setText(getItem(position).getMyTask().getContent());
+
+
         holder.getCheckBox().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -61,14 +72,6 @@ public class FloatingTasksAdapter extends ListAdapter<MyTaskPoJo, FloatingTasksA
                 myViewModel.updateTasks(myTask);
             }
         });
-
-        return holder;
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
-        holder.getCheckBox().setChecked(getItem(position).getMyTask().isHasFinish());
-        holder.getTextViewContent().setText(getItem(position).getMyTask().getContent());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

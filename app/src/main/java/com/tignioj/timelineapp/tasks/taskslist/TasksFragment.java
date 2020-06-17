@@ -137,11 +137,15 @@ public class TasksFragment extends Fragment {
 
         //在Menu里面,item和checkBox是两个东西，checkBox的值和item的值并不同步，因此要设置两个值
         MenuItem checkItem = menu.findItem(R.id.menu_checkbox_show_old_tasks);
+        MenuItem chekcItemFuture = menu.findItem(R.id.menu_checkbox_show_future_tasks);
         CheckBox checkBoxShowOldTasks = (CheckBox) menu.findItem(R.id.menu_checkbox_show_old_tasks).getActionView();
         CheckBox checkBoxShowFuture = (CheckBox) menu.findItem(R.id.menu_checkbox_show_future_tasks).getActionView();
+
+
         checkBoxShowOldTasks.setChecked(isShowOld);
         checkBoxShowFuture.setChecked(isShowFuture);
         checkItem.setChecked(isShowOld);
+        chekcItemFuture.setChecked(isShowFuture);
 
         //监听checkbox
         checkBoxShowOldTasks.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -232,11 +236,11 @@ public class TasksFragment extends Fragment {
         myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
 
         SharedPreferences shp = requireActivity().getSharedPreferences(DB_TASKS_SHOWING_SETTING, Context.MODE_PRIVATE);
-        boolean isShowOld = shp.getBoolean(SHP_SHOW_OLD, false);
-        boolean isShowFinished = shp.getBoolean(SHP_SHOW_FINISHED, false);
-        boolean isShowFuture = shp.getBoolean(SHP_SHOW_FUTURE, false);
+        showOld  = shp.getBoolean(SHP_SHOW_OLD, false);
+        showCompleted = shp.getBoolean(SHP_SHOW_FINISHED, false);
+        showFuture = shp.getBoolean(SHP_SHOW_FUTURE, false);
 
-        myTaskLiveData = myViewModel.getTodayMyTaskLiveDataByTimeLineId(timeLineId, isShowOld, isShowFinished, isShowFuture);
+        myTaskLiveData = myViewModel.getTodayMyTaskLiveDataByTimeLineId(timeLineId, showOld, showCompleted, showFuture);
 
         et = requireView().findViewById(R.id.et_task);
         chipRemindMeDate.setOnClickListener(new View.OnClickListener() {

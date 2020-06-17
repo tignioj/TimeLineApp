@@ -64,6 +64,7 @@ public class FloatingTasksFragment extends Fragment {
 
         //注意：observe方法观察对象(requireActivity()指向了MainActivity)
         // 当观察对象处于非活跃状态的时候(即非RESUME或者START状态)则失效，解决办法就是直接用 observeForever方法
+
         myTaskLiveData = myViewModel.getTodayMyTaskLiveDataByCurrentTimeLine();
         myTaskLiveData.observeForever(observer);
     }
